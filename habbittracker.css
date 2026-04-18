@@ -193,21 +193,23 @@ body {
 .identity-habits {
     display: flex;
     flex-direction: column;
-    align-items: center; /* Уже есть, но проверь */
+    align-items: center;
     width: 100%;
     max-height: 0;
     overflow: hidden;
     opacity: 0;
     transition: all 1s cubic-bezier(0.4, 0, 0.2, 1);
     margin-top: 0;
-    text-align: center; /* Добавь это */
+    text-align: center; /* Центрирует inline-block элементы */
 }
+
 .identity-item.active .identity-habits {
     max-height: 550px;
     opacity: 1;
     margin-top: 25px;
 }
 
+/* === ПРИВЫЧКИ И ПЕРЕЧЁРКИВАНИЕ === */
 .habit {
     font-size: 15px;
     color: #555555;
@@ -217,7 +219,7 @@ body {
     border: none;
     border-radius: 0;
     
-    /* Изменения для точного перечёркивания */
+    /* Исправление для перечёркивания только текста */
     display: inline-block;
     width: auto;
     max-width: 90%;
@@ -232,9 +234,8 @@ body {
     position: relative;
     overflow: hidden;
 }
-}
 
-/* Анимация перечёркивания слева направо */
+/* Анимация перечёркивания (линия только по ширине текста) */
 .habit::after {
     content: '';
     position: absolute;
@@ -254,6 +255,7 @@ body {
     color: #111111;
 }
 
+/* Когда выбрано - линия растягивается на 100% (то есть на ширину текста) */
 .habit.selected::after {
     width: 100%;
 }
