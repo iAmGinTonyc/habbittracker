@@ -12,81 +12,91 @@
     <section id="intro-screen">
         <div class="wolf-container">
             <img src="pics/wolf_master.jpeg" alt="Мастер-волк" class="wolf-avatar-img">
-            
-            <!-- Контейнер для умных фраз -->
             <div class="phrase-container">
                 <p id="intro-text">Повторение — это не рутина. Это ритм, в котором рождается мастерство.</p>
             </div>
-            
-            <!-- Фиксированная подсказка -->
             <div class="hint-text">нажми на экран, чтобы следовать своему пути</div>
         </div>
     </section>
 
-    <!-- ЭКРАН 2: Развилка идентичностей -->
+    <!-- ЭКРАН 2: Идентичность + Список Целей (7 штук) -->
     <section id="identity-screen" class="hidden">
         <h2 class="screen-title">Кем ты хочешь стать?</h2>
-        <p class="global-hint">в начале пути у тебя есть возможность выбрать только 1 идентичность и не более 3 привычек для нее</p>
+        <p class="global-hint">выбери идентичность, затем до 3-х главных целей</p>
         
         <div class="identity-row">
             <!-- Атлет -->
-            <div class="identity-item">
-                <div class="identity-header" data-id="athlete">
+            <div class="identity-item" data-id="athlete">
+                <div class="identity-header">
                     <span class="identity-name">Атлет</span>
                 </div>
+                <!-- 7 целей вместо 8 привычек -->
                 <div class="identity-habits">
-                    <div class="habit" data-habit="water">Выпить стакан воды утром</div>
-                    <div class="habit" data-habit="stretch">Сделать 5-минутную зарядку / растяжку</div>
-                    <div class="habit" data-habit="veggies">Добавить порцию овощей к обеду</div>
-                    <div class="habit" data-habit="walk">Пройти 30 минут пешком</div>
-                    <div class="habit" data-habit="sleep">Лечь спать до 23:00</div>
-                    <div class="habit" data-habit="training">Силовая тренировка (20+ мин)</div>
-                    <div class="habit" data-habit="detox">Цифровой детокс за 1 час до сна</div>
-                    <div class="habit" data-habit="breath">5 минут дыхательных практик после тренировки</div>
+                    <div class="habit" data-habit="energy">Вечная энергия</div>
+                    <div class="habit" data-habit="body">Тело мечты</div>
+                    <div class="habit" data-habit="health">Железное здоровье</div>
+                    <div class="habit" data-habit="sport">Спортивный результат</div>
+                    <div class="habit" data-habit="discipline">Дисциплина и режим</div>
+                    <div class="habit" data-habit="flex">Гибкость и подвижность</div>
+                    <div class="habit" data-habit="recovery">Глубокое восстановление</div>
                 </div>
-                <div class="selection-info">выбрано <span class="count">0</span>/3 привычек.<br>подтверждаешь выбор?</div>
+                <div class="confirm-wrapper"></div>
             </div>
             
             <div class="separator"></div>
 
             <!-- Студент -->
-            <div class="identity-item">
-                <div class="identity-header" data-id="student">
+            <div class="identity-item" data-id="student">
+                <div class="identity-header">
                     <span class="identity-name">Студент</span>
                 </div>
                 <div class="identity-habits">
-                    <div class="habit" data-habit="read">Прочитать 5 страниц книги</div>
-                    <div class="habit" data-habit="podcast">Послушать 1 подкаст / лекцию (15+ мин)</div>
-                    <div class="habit" data-habit="insight">Записать 1 идею или инсайт в заметки</div>
-                    <div class="habit" data-habit="words">Выучить 3 новых слова (иностранный язык)</div>
-                    <div class="habit" data-habit="puzzle">Решить 1 задачу / головоломку</div>
-                    <div class="habit" data-habit="course">Пройти 1 урок на обучающей платформе</div>
-                    <div class="habit" data-habit="retell">Пересказать прочитанное своими словами</div>
-                    <div class="habit" data-habit="nosocial">30 минут без соцсетей во время учёбы</div>
+                    <div class="habit" data-habit="expert">Глубокая экспертиза</div>
+                    <div class="habit" data-habit="lang">Владение языком</div>
+                    <div class="habit" data-habit="focus">Стальной фокус</div>
+                    <div class="habit" data-habit="creative">Креативное мышление</div>
+                    <div class="habit" data-habit="career">Карьерный рост</div>
+                    <div class="habit" data-habit="memory">Скорочтение и память</div>
+                    <div class="habit" data-habit="system">Система знаний</div>
                 </div>
-                <div class="selection-info">выбрано <span class="count">0</span>/3 привычек.<br>подтверждаешь выбор?</div>
+                <div class="confirm-wrapper"></div>
             </div>
 
             <div class="separator"></div>
 
             <!-- Монах -->
-            <div class="identity-item">
-                <div class="identity-header" data-id="monk">
+            <div class="identity-item" data-id="monk">
+                <div class="identity-header">
                     <span class="identity-name">Монах</span>
                 </div>
                 <div class="identity-habits">
-                    <div class="habit" data-habit="meditate">5 минут медитации утром</div>
-                    <div class="habit" data-habit="breath-eat">3 минуты осознанного дыхания перед едой</div>
-                    <div class="habit" data-habit="gratitude">Практика благодарности (записать 3 вещи)</div>
-                    <div class="habit" data-habit="walk-aware">Осознанная прогулка без телефона (10 мин)</div>
-                    <div class="habit" data-habit="detox-hour">Цифровой детокс: 1 час в тишине</div>
-                    <div class="habit" data-habit="reflection">Вечерняя рефлексия: «Что я чувствовал сегодня?»</div>
-                    <div class="habit" data-habit="tea">Вечерний ритуал: чай без экрана</div>
-                    <div class="habit" data-habit="pause">Практика «Стоп»: пауза перед реакцией на стресс</div>
+                    <div class="habit" data-habit="silence">Внутренняя тишина</div>
+                    <div class="habit" data-habit="aware">Осознанность 24/7</div>
+                    <div class="habit" data-habit="detox">Цифровой детокс</div>
+                    <div class="habit" data-habit="emotion">Эмоциональный контроль</div>
+                    <div class="habit" data-habit="spirit">Духовный рост</div>
+                    <div class="habit" data-habit="minim">Простота и минимализм</div>
+                    <div class="habit" data-habit="nature">Гармония с природой</div>
                 </div>
-                <div class="selection-info">выбрано <span class="count">0</span>/3 привычек.<br>подтверждаешь выбор?</div>
+                <div class="confirm-wrapper"></div>
             </div>
         </div>
+    </section>
+
+    <!-- ЭКРАН 3: Выбор привычки под цель -->
+    <section id="evolution-screen" class="hidden">
+        <div class="back-arrow" id="back-btn">←</div>
+        
+        <div class="evo-header">
+            <h2 class="evo-title" id="evo-title">Вечная энергия</h2>
+            <p class="evo-subtitle">с чего начнем движение к цели?</p>
+        </div>
+
+        <div class="evo-list" id="evo-list">
+            <!-- Сюда через JS встанут 3 простые привычки -->
+        </div>
+
+        <button class="evo-confirm-btn" id="evo-final-confirm">подтвердить привычку</button>
     </section>
 
     <script src="habbittracker.js"></script>
