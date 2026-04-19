@@ -30,7 +30,6 @@
                 <div class="identity-header">
                     <span class="identity-name">Атлет</span>
                 </div>
-                <!-- 7 целей вместо 8 привычек -->
                 <div class="identity-habits">
                     <div class="habit" data-habit="energy">Вечная энергия</div>
                     <div class="habit" data-habit="body">Тело мечты</div>
@@ -83,22 +82,61 @@
         </div>
     </section>
 
-    <!-- ЭКРАН 3: Выбор привычки под цель -->
+    <!-- ЭКРАН 3: Эволюция привычек (Слайдеры) -->
     <section id="evolution-screen" class="hidden">
         <div class="back-arrow" id="back-btn">←</div>
         
         <div class="evo-header">
-            <h2 class="evo-title" id="evo-title">Вечная энергия</h2>
-            <p class="evo-subtitle">с чего начнем движение к цели?</p>
+            <h2 class="evo-title" id="evo-title">Студент</h2>
+            <p class="evo-subtitle">выбери конкретную привычку для каждой цели</p>
         </div>
 
-        <div class="evo-list" id="evo-list">
-            <!-- Сюда через JS встанут 3 простые привычки -->
+        <div class="evo-list" id="evo-list"></div>
+
+        <button class="evo-confirm-btn" id="evo-final-confirm">зафиксировать путь</button>
+    </section>
+
+    <!-- ЭКРАН 4: ДАШБОРД (Главный экран) -->
+    <section id="dashboard-screen" class="hidden">
+        <!-- Кнопка сброса (для тестов) -->
+        <div class="reset-btn" id="reset-btn">↺</div>
+        
+        <div class="dash-header">
+            <span class="dash-top-label">Твой путь:</span>
+            <div class="dash-info-row">
+                <h1 id="dash-identity-name">Студент</h1>
+                <div class="dash-level">
+                    <span class="level-label">ур.</span>
+                    <span class="level-value" id="dash-level-value">2</span>
+                </div>
+            </div>
         </div>
 
-        <button class="evo-confirm-btn" id="evo-final-confirm">подтвердить привычку</button>
+        <div class="dash-content">
+            <h3 class="dash-subtitle">Задачи на сегодня</h3>
+            <div id="dash-habit-list">
+                <!-- Привычки рендерятся через JS -->
+            </div>
+        </div>
+
+        <div class="dash-footer">
+            <div class="progress-container">
+                <div class="progress-label">
+                    <span id="progress-text">0 / 15 XP</span>
+                    <span id="progress-percent">0%</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress-fill"></div>
+                </div>
+            </div>
+        </div>
     </section>
 
     <script src="habbittracker.js"></script>
 </body>
+
+<div id="loading-overlay" class="loading-overlay">
+    <div class="loading-text">терпение — ключ к успеху...</div>
+</div>
+
 </html>
