@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // === ЭЛЕМЕНТЫ ===
     const introScreen = document.getElementById('intro-screen');
     const introText = document.getElementById('intro-text');
     const identityScreen = document.getElementById('identity-screen');
@@ -7,10 +8,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const evoTitle = document.getElementById('evo-title');
     const backBtn = document.getElementById('back-btn');
     const evoFinalConfirm = document.getElementById('evo-final-confirm');
+    const dashboardScreen = document.getElementById('dashboard-screen');
+    const resetBtn = document.getElementById('reset-btn');
+    const loadingOverlay = document.getElementById('loading-overlay');
 
-    // === ДАННЫЕ: Цель -> 3 простые привычки ===
+    // === ДАННЫЕ (Цели -> Привычки) ===
     const goalHabits = {
-        // Атлет
         energy: ['Стакан воды натощак', 'Сон 7-8 часов', 'Контрастный душ'],
         body: ['Силовая 15 мин', 'Белок в каждом приеме', 'Замеры раз в неделю'],
         health: ['Порция овощей к обеду', '8000 шагов', 'Отказ от сахара'],
@@ -18,7 +21,6 @@ document.addEventListener('DOMContentLoaded', () => {
         discipline: ['Подъем в одно время', 'План вечера на утро', 'Минимум 2 мин'],
         flex: ['Растяжка 5 мин', 'МФР-ролл вечером', 'Ходьба босиком 10 мин'],
         recovery: ['Медитация после нагрузки', 'Витамины по расписанию', 'Нет экранам до сна'],
-        // Студент
         expert: ['10 страниц книги', 'Лекция 15 мин', 'Конспект 1 идеи'],
         lang: ['5 новых слов', '1 минута вслух', 'Интервальное повторение'],
         focus: ['25 мин без телефона', 'Уведомления выкл', 'Чистый рабочий стол'],
@@ -26,7 +28,6 @@ document.addEventListener('DOMContentLoaded', () => {
         career: ['1 урок курса', '1 контакт/нетворкинг', 'Пополнить портфолио'],
         memory: ['Чтение с таймером', 'Ментальная карта', 'Пересказ своими словами'],
         system: ['Разбор 5 файлов', 'Связать 2 заметки', 'Архив старого'],
-        // Монах
         silence: ['3 минуты тишины', 'Дыхание 4-7-8', 'Дневник выгрузки мыслей'],
         aware: ['Осознанное питье', 'Прогулка без наушников', 'Чек-ин: Где я сейчас?'],
         detox: ['Отключить уведомления', 'Телефон в другой комнате', 'Цифровой закат'],
@@ -53,6 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
         "Дисциплина — это не ограничение свободы. Это путь к ней."
     ];
 
+    // === ПЕРЕМЕННЫЕ СОСТОЯНИЯ ===
     let selectedIdentity = null;
     let selectedGoals = { athlete: [], student: [], monk: [] };
     let sliderStates = {};
@@ -60,6 +62,56 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentPhraseIndex = 0;
     let isTransitioning = false;
 
+    // === ЛОГИКА УРОВНЕЙ И XP ===
+    function getLevelStats(level) {
+        const xpNeeded = Math.floor(15 * Math.pow(level, 1.8));
+        const xpPerHabit = 5 + (level - 1) * 3;
+        return { xpNeeded, xpPerHabit };
+    }
+
+    // === ГЛОБАЛЬНОЕ СОСТОЯНИЕ (DASHBOARD) ===
+    let dashState = {
+        identity: null,
+        identityName: null,
+        level: 1,
+        currentXP: 0,
+        habits: [],
+        lastActiveDate: null
+    };
+
+    function saveProgress() {
+        localStorage.setItem('habbittracker_progress', JSON.stringify(dashState));
+    }
+
+    function loadProgress() {
+        const saved = localStorage.getItem('habbittracker_progress');
+        return saved ? JSON.parse(saved) : null;
+    }
+
+    function checkNewDay() {
+        const today = new Date().toISOString().split('T')[0];
+        if (dashState.lastActiveDate !== today) {
+            dashState.habits.forEach(h => h.completed = false);
+            dashState.lastActiveDate = today;
+            saveProgress();
+        }
+    }
+
+    // === ИНИЦИАЛИЗАЦИЯ ПРИЛОЖЕНИЯ ===
+    function init() {
+        const saved = loadProgress();
+        if (saved && saved.identity) {
+            dashState = saved;
+            checkNewDay();
+            showDashboard();
+        } else {
+            // Если нет данных, показываем Интро
+            introScreen.style.opacity = '1';
+            phraseInterval = setInterval(changePhrase, 5000);
+        }
+    }
+
+    // === ИНТРО: СМЕНА ФРАЗ ===
     function changePhrase() {
         if (isTransitioning) return;
         isTransitioning = true;
@@ -71,36 +123,60 @@ document.addEventListener('DOMContentLoaded', () => {
             isTransitioning = false;
         }, 1500);
     }
-    phraseInterval = setInterval(changePhrase, 5000);
 
+    // === ПЕРЕХОД С ИНТРО -> ВЫБОР ИДЕНТИЧНОСТИ (С ЗАГЛУШКОЙ) ===
     introScreen.addEventListener('click', () => {
         clearInterval(phraseInterval);
-        introScreen.style.opacity = '0';
-        setTimeout(() => { introScreen.style.display = 'none'; identityScreen.classList.add('visible'); }, 1200);
+        
+        // 1. Показываем заглушку
+        loadingOverlay.classList.add('active');
+        
+        // 2. Ждем, потом скрываем интро и показываем выбор
+        setTimeout(() => {
+            introScreen.style.opacity = '0';
+            setTimeout(() => {
+                introScreen.style.display = 'none';
+                loadingOverlay.classList.remove('active'); // Скрываем заглушку
+                identityScreen.classList.add('visible');
+            }, 500);
+        }, 1500);
     });
 
+    // === ЛОГИКА ИДЕНТИЧНОСТЕЙ (Аккордеон) ===
     document.querySelectorAll('.identity-header').forEach(header => {
         header.addEventListener('click', (e) => {
             e.stopPropagation();
             const parent = header.closest('.identity-item');
             const id = parent.dataset.id;
             const isActive = parent.classList.contains('active');
+            
             document.querySelectorAll('.identity-item').forEach(item => item.classList.remove('active'));
-            if (!isActive) { parent.classList.add('active'); selectedIdentity = id; } else { selectedIdentity = null; }
+            
+            if (!isActive) { 
+                parent.classList.add('active'); 
+                selectedIdentity = id; 
+            } else { 
+                selectedIdentity = null; 
+            }
         });
     });
 
+    // === ЛОГИКА ВЫБОРА ЦЕЛЕЙ (до 3-х) ===
     document.querySelectorAll('.habit').forEach(habit => {
         habit.addEventListener('click', (e) => {
             e.stopPropagation();
             const parent = habit.closest('.identity-item');
             const id = parent.dataset.id;
             const goalId = habit.dataset.habit;
+            
             if (habit.classList.contains('selected')) {
                 habit.classList.remove('selected');
                 selectedGoals[id] = selectedGoals[id].filter(g => g !== goalId);
             } else {
-                if (selectedGoals[id].length < 3) { habit.classList.add('selected'); selectedGoals[id].push(goalId); }
+                if (selectedGoals[id].length < 3) { 
+                    habit.classList.add('selected'); 
+                    selectedGoals[id].push(goalId); 
+                }
             }
             updateHabitStates(parent);
             updateConfirmButton(parent);
@@ -118,28 +194,26 @@ document.addEventListener('DOMContentLoaded', () => {
         const id = parent.dataset.id;
         const count = selectedGoals[id].length;
         const wrapper = parent.querySelector('.confirm-wrapper');
-        // Изменил текст: "привычек" → "целей"
         wrapper.innerHTML = `<span class="confirm-count">выбрано ${count}/3 целей.</span><br><span class="confirm-text ${count > 0 ? '' : 'disabled'}" id="confirm-${id}">подтверждаешь выбор?</span>`;
         const btn = wrapper.querySelector('.confirm-text');
         if (count > 0) btn.addEventListener('click', (e) => { e.stopPropagation(); startTransition(id); });
     }
     document.querySelectorAll('.identity-item').forEach(item => updateConfirmButton(item));
 
+    // === ПЕРЕХОД ИДЕНТИЧНОСТЬ -> ЭВОЛЮЦИЯ (Анимация FLIP) ===
     function startTransition(identityId) {
         const activeNameEl = document.querySelector('.identity-item.active .identity-name');
         if (!activeNameEl) return;
-    
+
         renderEvolutionScreen(identityId);
         evolutionScreen.classList.add('visible');
-        
-        // Заголовок = название идентичности (Атлет / Студент / Монах)
         evoTitle.textContent = activeNameEl.textContent; 
         evoTitle.style.opacity = '0';
         evoTitle.offsetHeight; 
         
         const endRect = evoTitle.getBoundingClientRect();
         const targetComp = window.getComputedStyle(evoTitle);
-    
+
         const clone = document.createElement('span');
         clone.className = 'clone-title';
         clone.textContent = activeNameEl.textContent;
@@ -153,23 +227,23 @@ document.addEventListener('DOMContentLoaded', () => {
             transformOrigin: 'top left'
         });
         document.body.appendChild(clone);
-    
+
         const startRect = activeNameEl.getBoundingClientRect();
         const deltaX = startRect.left - endRect.left;
         const deltaY = startRect.top - endRect.top;
         const scaleX = startRect.width / endRect.width;
         const scaleY = startRect.height / endRect.height;
         clone.style.transform = `translate(${deltaX}px, ${deltaY}px) scale(${scaleX}, ${scaleY})`;
-    
+
         identityScreen.classList.add('dissolving');
         identityScreen.style.pointerEvents = 'none';
-    
+
         requestAnimationFrame(() => {
             requestAnimationFrame(() => {
                 clone.style.transform = 'translate(0, 0) scale(1, 1)';
             });
         });
-    
+
         clone.addEventListener('transitionend', () => {
             evoTitle.style.opacity = '1';
             clone.remove();
@@ -182,8 +256,6 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderEvolutionScreen(identityId) {
         evoList.innerHTML = '';
         sliderStates = {};
-        
-        // Берём только те цели, которые выбрал пользователь
         const selectedGoalIds = selectedGoals[identityId] || [];
         
         selectedGoalIds.forEach((goalId) => {
@@ -212,11 +284,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function initSliders() {
         document.querySelectorAll('.evo-slider-wrapper').forEach(wrapper => {
-            const habitId = wrapper.dataset.habit;
             const track = wrapper.querySelector('.evo-track');
             const options = wrapper.querySelectorAll('.evo-option');
             let current = 0, startX = 0, isDragging = false;
-            const update = () => { track.style.transform = `translateX(-${current * 100}%)`; sliderStates[habitId] = current; };
+            const update = () => { track.style.transform = `translateX(-${current * 100}%)`; };
             wrapper.querySelector('.prev').addEventListener('click', e => { e.stopPropagation(); if(current>0){current--;update();} });
             wrapper.querySelector('.next').addEventListener('click', e => { e.stopPropagation(); if(current<options.length-1){current++;update();} });
             wrapper.addEventListener('mousedown', e => { startX = e.pageX; isDragging = true; });
@@ -231,6 +302,127 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // === ФИНАЛЬНОЕ ПОДТВЕРЖДЕНИЕ -> ЗАГРУЗКА -> ДАШБОРД ===
+    evoFinalConfirm.addEventListener('click', () => {
+        const activeNameEl = document.querySelector('.identity-item.active .identity-name');
+        const identityId = document.querySelector('.identity-item.active').dataset.id;
+        const selectedGoalIds = selectedGoals[identityId];
+        
+        const finalHabits = selectedGoalIds.map(goalId => {
+            const wrapper = document.querySelector(`.evo-slider-wrapper[data-goal="${goalId}"]`);
+            const track = wrapper.querySelector('.evo-track');
+            const options = wrapper.querySelectorAll('.evo-option');
+            const transform = track.style.transform;
+            const percent = transform ? parseInt(transform.match(/-(\d+)/)?.[1] || 0) : 0;
+            const index = percent / 100;
+            
+            return {
+                id: goalId,
+                text: options[index] ? options[index].textContent : options[0].textContent,
+                completed: false
+            };
+        });
+
+        // 1. Скрываем экран эволюции
+        evolutionScreen.classList.remove('visible');
+        
+        // 2. Показываем ЗАГЛУШКУ
+        loadingOverlay.classList.add('active');
+
+        // 3. Ждем 2 секунды (магия), сохраняем и переходим
+        setTimeout(() => {
+            dashState = {
+                identity: identityId,
+                identityName: activeNameEl.textContent,
+                level: 1,
+                currentXP: 0,
+                habits: finalHabits,
+                lastActiveDate: new Date().toISOString().split('T')[0]
+            };
+            
+            saveProgress();
+            
+            // 4. Скрываем заглушку и показываем Дашборд
+            loadingOverlay.classList.remove('active');
+            showDashboard();
+        }, 2000);
+    });
+
+    // === ЛОГИКА ДАШБОРДА ===
+    function showDashboard() {
+        identityScreen.style.display = 'none';
+        evolutionScreen.style.display = 'none';
+        
+        document.getElementById('dash-identity-name').textContent = dashState.identityName;
+        
+        renderDashboardHabits();
+        updateProgressUI();
+        
+        dashboardScreen.classList.add('visible');
+    }
+
+    function renderDashboardHabits() {
+        const list = document.getElementById('dash-habit-list');
+        list.innerHTML = '';
+        
+        const stats = getLevelStats(dashState.level);
+
+        dashState.habits.forEach((habit, index) => {
+            const row = document.createElement('div');
+            row.className = `dash-habit-row ${habit.completed ? 'completed' : ''}`;
+            row.innerHTML = `
+                <span class="dash-habit-text">${habit.text}</span>
+                <span class="dash-habit-xp">+${stats.xpPerHabit} XP</span>
+            `;
+            row.addEventListener('click', () => toggleHabit(index, row));
+            list.appendChild(row);
+        });
+    }
+
+    function toggleHabit(index, rowElement) {
+        if (dashState.habits[index].completed) return; 
+        
+        const stats = getLevelStats(dashState.level);
+        
+        dashState.habits[index].completed = true;
+        dashState.currentXP += stats.xpPerHabit;
+        
+        rowElement.classList.add('completed');
+        
+        if (dashState.currentXP >= stats.xpNeeded) {
+            dashState.level++;
+            dashState.currentXP = 0;
+            const levelEl = document.getElementById('dash-level-value');
+            levelEl.style.transform = "scale(1.5)";
+            levelEl.style.color = "#111";
+            setTimeout(() => {
+                levelEl.style.transform = "scale(1)";
+            }, 300);
+        }
+        
+        updateProgressUI();
+        saveProgress();
+    }
+
+    function updateProgressUI() {
+        const stats = getLevelStats(dashState.level);
+        const percent = Math.min(100, (dashState.currentXP / stats.xpNeeded) * 100);
+        
+        document.getElementById('progress-fill').style.width = `${percent}%`;
+        document.getElementById('progress-text').textContent = `${dashState.currentXP} / ${stats.xpNeeded} XP`;
+        document.getElementById('progress-percent').textContent = `${Math.round(percent)}%`;
+        document.getElementById('dash-level-value').textContent = dashState.level;
+    }
+
+    // Кнопка сброса
+    resetBtn.addEventListener('click', () => {
+        if(confirm('Сбросить весь прогресс и начать заново?')) {
+            localStorage.removeItem('habbittracker_progress');
+            location.reload();
+        }
+    });
+
+    // Кнопка назад (на экран эволюции)
     backBtn.addEventListener('click', () => {
         evolutionScreen.classList.remove('visible');
         setTimeout(() => {
@@ -239,15 +431,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 300);
     });
 
-    evoFinalConfirm.addEventListener('click', () => {
-        console.log('💾 Финальный выбор:', sliderStates);
-        alert('Привычка подтверждена! Переход к дашборду... (демо)');
-    });
-
     document.addEventListener('click', e => {
         if(!e.target.closest('.identity-header') && !e.target.closest('.habit') && !e.target.closest('.confirm-wrapper')) {
             document.querySelectorAll('.identity-item').forEach(i => i.classList.remove('active'));
             selectedIdentity = null;
         }
     });
+
+    // Запуск приложения
+    init();
 });
