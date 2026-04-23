@@ -12,29 +12,34 @@ document.addEventListener('DOMContentLoaded', () => {
     const resetBtn = document.getElementById('reset-btn');
     const loadingOverlay = document.getElementById('loading-overlay');
 
-    // === ДАННЫЕ (Цели -> Привычки) ===
+    // === НОВАЯ БАЗА ДАННЫХ (Утвержденные привычки) ===
     const goalHabits = {
-        energy: ['Стакан воды натощак', 'Сон 7-8 часов', 'Контрастный душ'],
-        body: ['Силовая 15 мин', 'Белок в каждом приеме', 'Замеры раз в неделю'],
-        health: ['Порция овощей к обеду', '8000 шагов', 'Отказ от сахара'],
-        sport: ['Интервалы 10 мин', 'Дневник тренировок', 'Разминка суставов'],
-        discipline: ['Подъем в одно время', 'План вечера на утро', 'Минимум 2 мин'],
-        flex: ['Растяжка 5 мин', 'МФР-ролл вечером', 'Ходьба босиком 10 мин'],
-        recovery: ['Медитация после нагрузки', 'Витамины по расписанию', 'Нет экранам до сна'],
-        expert: ['10 страниц книги', 'Лекция 15 мин', 'Конспект 1 идеи'],
-        lang: ['5 новых слов', '1 минута вслух', 'Интервальное повторение'],
-        focus: ['25 мин без телефона', 'Уведомления выкл', 'Чистый рабочий стол'],
-        creative: ['1 идея в заметки', 'Прогулка без цели', 'Скетч от руки'],
-        career: ['1 урок курса', '1 контакт/нетворкинг', 'Пополнить портфолио'],
-        memory: ['Чтение с таймером', 'Ментальная карта', 'Пересказ своими словами'],
-        system: ['Разбор 5 файлов', 'Связать 2 заметки', 'Архив старого'],
-        silence: ['3 минуты тишины', 'Дыхание 4-7-8', 'Дневник выгрузки мыслей'],
-        aware: ['Осознанное питье', 'Прогулка без наушников', 'Чек-ин: Где я сейчас?'],
-        detox: ['Отключить уведомления', 'Телефон в другой комнате', 'Цифровой закат'],
-        emotion: ['Пауза 3 сек', 'Записать 3 эмоции', 'Благодарность'],
-        spirit: ['1 страница мудрости', 'Вечерний ритуал свечи', 'День молчания'],
-        minim: ['Выбросить 1 вещь', 'Отказ от покупки', 'Чистое пространство 5 мин'],
-        nature: ['10 мин на воздухе', 'Встретить рассвет', 'Контакт с землей']
+        // АТЛЕТ
+        energy: ['Стакан воды натощак', '10 приседаний перед завтраком', '3 глубоких вдоха перед едой'],
+        body: ['10 отжиманий сразу после пробуждения', '1 минута планки перед сном', 'Растяжка шеи и плеч (2 мин)'],
+        health: ['Почистить зубы нитью', 'Гимнастика для глаз (20 сек вдаль)', 'Заменить сладкий чай на воду (1 раз)'],
+        sport: ['1 мин суставной разминки', 'Замерить утренний пульс', 'Написать план тренировки на завтра'],
+        discipline: ['Записать 3 главные задачи на завтра', 'Убрать рабочий стол перед сном', 'Вычеркнуть выполненное из списка'],
+        flex: ['Наклоны к ногам (достать до пола)', 'Вращения плечами и шеей (1 мин)', 'Растяжка грудных мышц в дверном проеме'],
+        recovery: ['Убрать телефон за 30 мин до сна', 'Записать 3 вещи, за которые благодарен', 'Почитать бумажную книгу 5 минут'],
+        
+        // СТУДЕНТ
+        expert: ['Выписать 1 ключевой термин', 'Послушать 2 мин тематического подкаста', 'Пересказать вслух 1 изученный факт'],
+        lang: ['Выучить 3 новых слова (карточки)', 'Прочитать 1 короткий пост на языке', 'Написать 1 предложение в дневнике'],
+        focus: ['Написать 1 главную задачу на стикере', 'Запустить таймер на 15 мин работы', 'Сделать 3 глубоких вдоха перед стартом'],
+        creative: ['Придумать 3 альтернативных решения', 'Написать 5 слов-ассоциаций', 'Задать себе вопрос «А что если…?»'],
+        career: ['Посмотреть 1 вакансию мечты (анализ)', 'Записать 1 профессиональное достижение', 'Открыть профиль эксперта и изучить 1 пост'],
+        memory: ['Прочитать абзац, ведя пальцем по строке', 'Запомнить 5 цифр/слов и повторить', 'Визуализировать прочитанное (закрыть глаза)'],
+        system: ['Почистить фотогалерею (удалить 10 фото)', 'Написать 2 главные задачи на завтра', 'Прибрать рабочий стол в конце дня'],
+        
+        // МОНАХ
+        silence: ['Посидеть 1 минуту в полной тишине', 'Выписать все мысли на лист (2 мин)', 'Отключить звук на телефоне на 15 минут'],
+        aware: ['Сделать первый глоток кофе/чая осознанно', 'Задать себе вопрос: «Где я сейчас?»', 'Посмотреть на свое отражение и улыбнуться'],
+        detox: ['Удалить 1 приложение, которое не нужно', 'Не брать телефон в туалет', 'Заменить 5 мин скроллинга на взгляд в окно'],
+        emotion: ['Записать 1 эмоцию, которую чувствуешь', 'Сжать и разжать кулаки 5 раз', 'Улыбнуться незнакомцу или коллеге'],
+        spirit: ['Спросить себя: «Кто я без своей работы?»', 'Поблагодарить тело за работу', 'Вспомнить свою главную ценность на сегодня'],
+        minim: ['Протереть 1 полку или поверхность', 'Надеть простую одежду (без логотипов)', 'Сказать «Нет» одной лишней просьбе'],
+        nature: ['Посмотреть на небо 30 секунд', 'Потрогать дерево или растение', 'Послушать пение птиц или шум ветра']
     };
 
     const goalNames = {
@@ -98,18 +103,18 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // === ИНИЦИАЛИЗАЦИЯ ПРИЛОЖЕНИЯ ===
-    function init() {
-        const saved = loadProgress();
-        if (saved && saved.identity) {
-            dashState = saved;
-            checkNewDay();
-            showDashboard();
-        } else {
-            // Если нет данных, показываем Интро
-            introScreen.style.opacity = '1';
-            phraseInterval = setInterval(changePhrase, 5000);
-        }
+function init() {
+    const saved = loadProgress();
+    if (saved && saved.identity) {
+        dashState = saved;
+        window.dashState = dashState;  // ← ОБНОВЛЯЕМ ГЛОБАЛЬНУЮ ССЫЛКУ!
+        checkNewDay();
+        showDashboard();
+    } else {
+        introScreen.style.opacity = '1';
+        phraseInterval = setInterval(changePhrase, 5000);
     }
+}
 
     // === ИНТРО: СМЕНА ФРАЗ ===
     function changePhrase() {
@@ -124,25 +129,21 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 1500);
     }
 
-    // === ПЕРЕХОД С ИНТРО -> ВЫБОР ИДЕНТИЧНОСТИ (С ЗАГЛУШКОЙ) ===
+    // === ПЕРЕХОД С ИНТРО -> ВЫБОР ИДЕНТИЧНОСТИ ===
     introScreen.addEventListener('click', () => {
         clearInterval(phraseInterval);
-        
-        // 1. Показываем заглушку
         loadingOverlay.classList.add('active');
-        
-        // 2. Ждем, потом скрываем интро и показываем выбор
         setTimeout(() => {
             introScreen.style.opacity = '0';
             setTimeout(() => {
                 introScreen.style.display = 'none';
-                loadingOverlay.classList.remove('active'); // Скрываем заглушку
+                loadingOverlay.classList.remove('active');
                 identityScreen.classList.add('visible');
             }, 500);
         }, 1500);
     });
 
-    // === ЛОГИКА ИДЕНТИЧНОСТЕЙ (Аккордеон) ===
+    // === ЛОГИКА ИДЕНТИЧНОСТЕЙ ===
     document.querySelectorAll('.identity-header').forEach(header => {
         header.addEventListener('click', (e) => {
             e.stopPropagation();
@@ -161,7 +162,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // === ЛОГИКА ВЫБОРА ЦЕЛЕЙ (до 3-х) ===
+    // === ЛОГИКА ВЫБОРА ЦЕЛЕЙ ===
     document.querySelectorAll('.habit').forEach(habit => {
         habit.addEventListener('click', (e) => {
             e.stopPropagation();
@@ -200,7 +201,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     document.querySelectorAll('.identity-item').forEach(item => updateConfirmButton(item));
 
-    // === ПЕРЕХОД ИДЕНТИЧНОСТЬ -> ЭВОЛЮЦИЯ (Анимация FLIP) ===
+    // === ПЕРЕХОД ИДЕНТИЧНОСТЬ -> ЭВОЛЮЦИЯ ===
     function startTransition(identityId) {
         const activeNameEl = document.querySelector('.identity-item.active .identity-name');
         if (!activeNameEl) return;
@@ -302,69 +303,76 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // === ФИНАЛЬНОЕ ПОДТВЕРЖДЕНИЕ -> ЗАГРУЗКА -> ДАШБОРД ===
+    // === ФИНАЛЬНОЕ ПОДТВЕРЖДЕНИЕ ===
     evoFinalConfirm.addEventListener('click', () => {
-        const activeNameEl = document.querySelector('.identity-item.active .identity-name');
-        const identityId = document.querySelector('.identity-item.active').dataset.id;
+        console.log('🔘 Кнопка "зафиксировать путь" нажата');
+
+        let activeItem = document.querySelector('.identity-item.active');
+        if (!activeItem && selectedIdentity) {
+            activeItem = document.querySelector(`.identity-item[data-id="${selectedIdentity}"]`);
+        }
+
+        if (!activeItem) {
+            console.error('❌ ОШИБКА: Не найдена активная идентичность');
+            alert('Ошибка: Потеряна связь с выбранной ролью.');
+            return;
+        }
+
+        const identityId = activeItem.dataset.id;
+        const activeNameEl = activeItem.querySelector('.identity-name');
         const selectedGoalIds = selectedGoals[identityId];
-        
+
+        if (!selectedGoalIds || selectedGoalIds.length === 0) {
+            console.error('❌ ОШИБКА: Список целей пуст');
+            return;
+        }
+
         const finalHabits = selectedGoalIds.map(goalId => {
             const wrapper = document.querySelector(`.evo-slider-wrapper[data-goal="${goalId}"]`);
+            if (!wrapper) return null;
+
             const track = wrapper.querySelector('.evo-track');
             const options = wrapper.querySelectorAll('.evo-option');
             const transform = track.style.transform;
-            const percent = transform ? parseInt(transform.match(/-(\d+)/)?.[1] || 0) : 0;
+            const match = transform ? transform.match(/-(\d+)%/) : null;
+            const percent = match ? parseInt(match[1]) : 0;
             const index = percent / 100;
-            
-            return {
-                id: goalId,
-                text: options[index] ? options[index].textContent : options[0].textContent,
-                completed: false
-            };
-        });
+            const habitText = options[index] ? options[index].textContent : (options[0] ? options[0].textContent : 'Ошибка');
 
-        // 1. Скрываем экран эволюции
+            return { id: goalId, text: habitText, completed: false };
+        }).filter(h => h !== null);
+
         evolutionScreen.classList.remove('visible');
-        
-        // 2. Показываем ЗАГЛУШКУ
         loadingOverlay.classList.add('active');
 
-        // 3. Ждем 2 секунды (магия), сохраняем и переходим
         setTimeout(() => {
             dashState = {
                 identity: identityId,
-                identityName: activeNameEl.textContent,
+                identityName: activeNameEl ? activeNameEl.textContent : 'Пользователь',
                 level: 1,
                 currentXP: 0,
                 habits: finalHabits,
                 lastActiveDate: new Date().toISOString().split('T')[0]
             };
-            
             saveProgress();
-            
-            // 4. Скрываем заглушку и показываем Дашборд
             loadingOverlay.classList.remove('active');
             showDashboard();
-        }, 2000);
+        }, 1500);
     });
 
     // === ЛОГИКА ДАШБОРДА ===
     function showDashboard() {
         identityScreen.style.display = 'none';
         evolutionScreen.style.display = 'none';
-        
         document.getElementById('dash-identity-name').textContent = dashState.identityName;
-        
         renderDashboardHabits();
         updateProgressUI();
-        
         dashboardScreen.classList.add('visible');
     }
 
     function renderDashboardHabits() {
         const list = document.getElementById('dash-habit-list');
         list.innerHTML = '';
-        
         const stats = getLevelStats(dashState.level);
 
         dashState.habits.forEach((habit, index) => {
@@ -381,12 +389,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function toggleHabit(index, rowElement) {
         if (dashState.habits[index].completed) return; 
-        
         const stats = getLevelStats(dashState.level);
-        
         dashState.habits[index].completed = true;
         dashState.currentXP += stats.xpPerHabit;
-        
         rowElement.classList.add('completed');
         
         if (dashState.currentXP >= stats.xpNeeded) {
@@ -395,11 +400,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const levelEl = document.getElementById('dash-level-value');
             levelEl.style.transform = "scale(1.5)";
             levelEl.style.color = "#111";
-            setTimeout(() => {
-                levelEl.style.transform = "scale(1)";
-            }, 300);
+            setTimeout(() => { levelEl.style.transform = "scale(1)"; }, 300);
         }
-        
         updateProgressUI();
         saveProgress();
     }
@@ -407,7 +409,6 @@ document.addEventListener('DOMContentLoaded', () => {
     function updateProgressUI() {
         const stats = getLevelStats(dashState.level);
         const percent = Math.min(100, (dashState.currentXP / stats.xpNeeded) * 100);
-        
         document.getElementById('progress-fill').style.width = `${percent}%`;
         document.getElementById('progress-text').textContent = `${dashState.currentXP} / ${stats.xpNeeded} XP`;
         document.getElementById('progress-percent').textContent = `${Math.round(percent)}%`;
@@ -416,13 +417,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Кнопка сброса
     resetBtn.addEventListener('click', () => {
-        if(confirm('Сбросить весь прогресс и начать заново?')) {
+        if(confirm('Сбросить весь прогресс?')) {
             localStorage.removeItem('habbittracker_progress');
             location.reload();
         }
     });
 
-    // Кнопка назад (на экран эволюции)
+    // Кнопка назад
     backBtn.addEventListener('click', () => {
         evolutionScreen.classList.remove('visible');
         setTimeout(() => {
@@ -438,6 +439,229 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // === 🎮 ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ДЛЯ ИГР ===
+    window.dashState = dashState;
+    window.saveProgress = saveProgress;
+    window.updateProgressUI = updateProgressUI;
+    window.getLevelStats = getLevelStats;
+    // ===========================================
+
+    // =========================================
+    // GAMES MANAGER — МИНИ-ИГРЫ
+    // =========================================
+    const GamesManager = (() => {
+        console.log('🎮 GamesManager загружается...');
+        
+        let modal, menuScreen, containerScreen, resultScreen, gameContent;
+        let resultTitle, resultMessage, resultXP, gameExitBtn;
+        let currentGame = null;
+        let gameInterval = null;
+
+        function init() {
+            console.log('🔧 GamesManager.init() вызван');
+            
+            modal = document.getElementById('games-modal');
+            const trigger = document.getElementById('games-trigger');
+            const closeBtn = document.getElementById('games-close');
+            
+            if (!modal || !trigger) { console.error('❌ Не найдены элементы игр'); return; }
+            
+            menuScreen = document.getElementById('games-menu');
+            containerScreen = document.getElementById('games-container');
+            resultScreen = document.getElementById('games-result');
+            gameContent = document.getElementById('game-content');
+            resultTitle = document.getElementById('result-title');
+            resultMessage = document.getElementById('result-message');
+            resultXP = document.getElementById('result-xp');
+            gameExitBtn = document.getElementById('game-exit-btn');
+            
+            trigger.addEventListener('click', (e) => { e.preventDefault(); openGamesMenu(); });
+            closeBtn?.addEventListener('click', closeGames);
+            gameExitBtn?.addEventListener('click', closeGames);
+            
+            document.getElementById('result-retry')?.addEventListener('click', () => startGame(currentGame));
+            document.getElementById('result-menu')?.addEventListener('click', showGamesMenu);
+
+            document.querySelectorAll('.game-card').forEach(card => {
+                card.addEventListener('click', () => startGame(card.dataset.game));
+            });
+
+            modal.addEventListener('click', (e) => { if (e.target === modal) closeGames(); });
+            document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && modal?.classList.contains('active')) closeGames(); });
+            
+            console.log('✅ GamesManager инициализирован');
+        }
+
+        function openGamesMenu() { modal.classList.add('active'); showGamesMenu(); }
+        function closeGames() { stopGame(); modal?.classList.remove('active'); currentGame = null; }
+        function showScreen(screen) { [menuScreen, containerScreen, resultScreen].forEach(s => s?.classList.remove('active')); screen?.classList.add('active'); }
+        function showGamesMenu() { stopGame(); showScreen(menuScreen); if (gameExitBtn) gameExitBtn.style.display = 'none'; }
+
+        function startGame(gameName) {
+            stopGame(); currentGame = gameName; showScreen(containerScreen); gameContent.innerHTML = '';
+            if (gameExitBtn) gameExitBtn.style.display = 'flex';
+            
+            switch(gameName) {
+                case 'count': initCountGame(); break;
+                case 'memory': initMemoryGame(); break;
+                case 'words': initWordsGame(); break;
+            }
+        }
+
+        function stopGame() { if (gameInterval) { clearInterval(gameInterval); gameInterval = null; } }
+
+        function finishGame(xp, message, details = {}) {
+            stopGame();
+            const earnedXP = Math.max(1, Math.min(10, xp));
+            resultTitle.textContent = 'Результат';
+            resultMessage.innerHTML = `${message}${details.extra ? `<br><small style="color:#888">${details.extra}</small>` : ''}`;
+            resultXP.textContent = `+${earnedXP} XP`;
+            showScreen(resultScreen);
+            
+            if (window.dashState) {
+                window.dashState.currentXP += earnedXP;
+                const stats = window.getLevelStats?.(window.dashState.level) || { xpNeeded: 15 };
+                if (window.dashState.currentXP >= stats.xpNeeded) { window.dashState.level++; window.dashState.currentXP = 0; }
+                window.saveProgress?.();
+                window.updateProgressUI?.();
+            }
+        }
+
+        // === ИГРА 1: ПОСЧИТАЙ ===
+        function initCountGame() {
+            gameContent.innerHTML = `
+                <div class="game-setup" id="count-setup">
+                    <h3>Выбери сложность</h3>
+                    <button class="difficulty-btn" data-diff="1">1-9</button>
+                    <button class="difficulty-btn" data-diff="2">10-99</button>
+                    <button class="difficulty-btn" data-diff="3">100-999</button>
+                </div>
+                <div class="game-area" id="count-area" style="display:none">
+                    <div class="game-timer" id="count-timer">60</div>
+                    <div class="game-equation" id="count-equation"></div>
+                    <input type="number" class="game-input" id="count-input" placeholder="?" autocomplete="off">
+                </div>`;
+
+            let difficulty = 1, timer = 60, correct = 0, total = 0, currentEq = null;
+
+            function getRandom(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+            function generate() {
+                const ranges = {1:[1,9], 2:[10,99], 3:[100,999]};
+                const [min, max] = ranges[difficulty];
+                let a = getRandom(min, max), b = getRandom(min, max), op = Math.random() > 0.5 ? '+' : '-';
+                if (op === '-' && a < b) [a, b] = [b, a];
+                return { a, b, op, result: op === '+' ? a + b : a - b };
+            }
+            function showEq() {
+                currentEq = generate();
+                document.getElementById('count-equation').textContent = `${currentEq.a} ${currentEq.op} ${currentEq.b} =`;
+                const input = document.getElementById('count-input'); input.value = ''; input.focus();
+            }
+            function start(diff) {
+                difficulty = diff; timer = 60; correct = 0; total = 0;
+                document.getElementById('count-setup').style.display = 'none';
+                document.getElementById('count-area').style.display = 'block';
+                document.getElementById('count-timer').textContent = timer;
+                showEq();
+                gameInterval = setInterval(() => { timer--; document.getElementById('count-timer').textContent = timer; if (timer <= 0) endGame(); }, 1000);
+            }
+            function endGame() { clearInterval(gameInterval); finishGame(correct, `Правильных ответов: ${correct} из ${total}`); }
+
+            document.querySelectorAll('#count-setup .difficulty-btn').forEach(btn => btn.addEventListener('click', (e) => start(parseInt(e.target.dataset.diff))));
+            document.getElementById('count-input')?.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter' && currentEq) {
+                    const ans = parseInt(e.target.value);
+                    if (!isNaN(ans)) {
+                        total++; const isCorrect = (ans === currentEq.result);
+                        if (isCorrect) { correct++; document.getElementById('count-area').style.backgroundColor = '#e8f5e9'; }
+                        else { document.getElementById('count-area').style.backgroundColor = '#ffebee'; }
+                        setTimeout(() => { document.getElementById('count-area').style.backgroundColor = ''; }, 300);
+                        showEq();
+                    }
+                }
+            });
+            start(1);
+        }
+
+        // === ИГРА 2: НАЙДИ ПАРУ ===
+        function initMemoryGame() {
+            const allCardImages = ['Буби 2.png','Буби 3.png','Буби 4.png','Буби 5.png','Буби 6.png','Буби 7.png','Буби 8.png','Буби 9.png','Буби 10.png','Буби Валет.png','Буби Дама.png','Буби Король.png','Буби Туз.png','Пики 2.png','Пики 3.png','Пики 4.png','Пики 5.png','Пики 6.png','Пики 7.png','Пики 8.png','Пики 9.png','Пики 10.png','Пики Валет.png','Пики Дама.png','Пики Король.png','Пики Туз.png','Трефы 2.png','Трефы 3.png','Трефы 4.png','Трефы 5.png','Трефы 6.png','Трефы 7.png','Трефы 8.png','Трефы 9.png','Трефы 10.png','Трефы Валет.png','Трефы Дама.png','Трефы Король.png','Трефы Туз.png','Черви 2.png','Черви 3.png','Черви 4.png','Черви 5.png','Черви 6.png','Черви 7.png','Черви 8.png','Черви 9.png','Черви 10.png','Черви Валет.png','Черви Дама.png','Черви Король.png','Черви Туз.png'];
+            const selectedImages = [...allCardImages].sort(() => Math.random() - 0.5).slice(0, 12);
+            let cards = [], flipped = [], matchedPairs = 0, moves = 0, canFlip = true;
+
+            const gameGrid = document.createElement('div');
+            gameGrid.id = 'game-grid';
+            gameGrid.style.cssText = 'grid-template-columns: repeat(6, 1fr); width: 100%; max-width: 100%; gap: 0;';
+            gameContent.appendChild(gameGrid);
+
+            function createCards() { cards = [...selectedImages, ...selectedImages].map((img, i) => ({ id: i, img, flipped: false, matched: false })).sort(() => Math.random() - 0.5); }
+            function render() {
+                gameGrid.innerHTML = '';
+                cards.forEach(card => {
+                    const el = document.createElement('div');
+                    el.className = `card${card.flipped || card.matched ? ' flipped' : ''}${card.matched ? ' matched' : ''}`;
+                    el.dataset.id = card.id;
+                    const back = document.createElement('div'); back.className = 'card-back'; back.innerHTML = '<span style="font-size:24px;color:#888">?</span>'; el.appendChild(back);
+                    const img = document.createElement('img'); img.src = `pics for games/${card.img}`; img.alt = ''; img.draggable = false;
+                    img.onerror = () => { img.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect fill="%23ddd" width="100" height="100"/></svg>'; };
+                    el.appendChild(img); el.addEventListener('click', () => flip(card.id)); gameGrid.appendChild(el);
+                });
+            }
+            function flip(id) {
+                if (!canFlip) return;
+                const card = cards.find(c => c.id === id);
+                if (flipped.length === 2 || card.flipped || card.matched) return;
+                card.flipped = true; flipped.push(card); render();
+                if (flipped.length === 2) {
+                    moves++; canFlip = false;
+                    setTimeout(() => {
+                        if (flipped[0].img === flipped[1].img) {
+                            flipped.forEach(c => { c.matched = true; c.flipped = false; }); matchedPairs++;
+                            if (matchedPairs === 12) { clearInterval(gameInterval); endGame(); }
+                        } else { flipped.forEach(c => c.flipped = false); }
+                        flipped = []; canFlip = true; render();
+                    }, 500);
+                }
+            }
+            function endGame() { const xp = Math.max(1, Math.round(matchedPairs * 0.83)); finishGame(xp, `Пар найдено: ${matchedPairs} из 12`, `Ходов: ${moves}`); }
+            createCards(); render();
+        }
+
+        // === ИГРА 3: ПОВТОРИ 10 СЛОВ ===
+        function initWordsGame() {
+            const allWords = ["яблоко","машина","дом","книга","ручка","солнце","вода","дерево","окно","стул","стол","кошка","собака","цветок","птица","небо","облако","лес","озеро","река","камень","песок","море","снег","дождь","ветер","луна","звезда","свет","тень","путь","дверь","замок","ключ","часы","телефон","ноутбук","клавиатура","мышь","экран","зеркало","картина","стена","крыша","крыло","хвост","лапа","нос","глаз","рот","ухо","волос","кожа","платье","рубашка","ботинок","сапог","шляпа","очки","сумка","портфель","карандаш","тетрадь","доска","мел","сцена","актер","роль","театр","музыка","песня","танец","праздник","рождение","день","ночь","сон","мысль","чувство","ум","сердце","рука","нога","голова","тело","жизнь","смерть","время","история","мир","война","дружба","любовь","ненависть","радость","печаль","страх","надежда","вера"];
+            let targetWords = [], entered = [], memorizeTime = 20, guessTime = 60, phase = 'memorize';
+
+            gameContent.innerHTML = `<div class="game-timer" id="words-timer">${memorizeTime}</div><div id="words-display"></div><div id="words-input-area" style="display:none"><input type="text" class="game-input" id="words-input" placeholder="Введи слово и нажми Enter" autocomplete="off"><div class="word-placeholders" id="words-placeholders"></div></div>`;
+
+            function getRandomWords(n) { return [...allWords].sort(() => Math.random() - 0.5).slice(0, n); }
+            function setupPlaceholders() { const container = document.getElementById('words-placeholders'); container.innerHTML = ''; targetWords.forEach((_, i) => { const ph = document.createElement('div'); ph.className = 'word-placeholder'; ph.id = `ph-${i}`; container.appendChild(ph); }); }
+            function start() {
+                targetWords = getRandomWords(10); entered = []; phase = 'memorize'; memorizeTime = 20;
+                document.getElementById('words-display').textContent = targetWords.join(', ');
+                document.getElementById('words-input-area').style.display = 'none';
+                document.getElementById('words-timer').textContent = memorizeTime; setupPlaceholders();
+                gameInterval = setInterval(() => {
+                    if (phase === 'memorize') { memorizeTime--; document.getElementById('words-timer').textContent = memorizeTime; if (memorizeTime <= 0) { phase = 'guess'; guessTime = 60; document.getElementById('words-display').style.visibility = 'hidden'; document.getElementById('words-input-area').style.display = 'block'; document.getElementById('words-input').focus(); document.getElementById('words-timer').textContent = guessTime; } }
+                    else { guessTime--; document.getElementById('words-timer').textContent = guessTime; if (guessTime <= 0) endGame(); }
+                }, 1000);
+            }
+            function endGame() { clearInterval(gameInterval); const correct = targetWords.filter(w => entered.includes(w)).length; const missed = targetWords.filter(w => !entered.includes(w)); let extra = ''; if (missed.length > 0) extra = `Не введено: ${missed.slice(0,3).join(', ')}${missed.length>3?'...':''}`; finishGame(correct, `Угадано слов: ${correct} из 10`, extra); }
+            document.getElementById('words-input')?.addEventListener('keypress', (e) => { if (e.key === 'Enter' && phase === 'guess') { const word = e.target.value.trim().toLowerCase(); e.target.value = ''; if (word && !entered.includes(word)) { entered.push(word); const idx = targetWords.indexOf(word); if (idx >= 0) {
+                const ph = document.getElementById(`ph-${idx}`);
+                if (ph) {
+                    ph.classList.add('filled');
+                    ph.textContent = word;  // ← ДОБАВЛЯЕМ ТЕКСТ!
+                }
+            } if (targetWords.every(w => entered.includes(w))) endGame(); } } });
+            start();
+        }
+
+        return { init };
+    })();
+
     // Запуск приложения
     init();
+    // Инициализация игр
+    if (typeof GamesManager !== 'undefined') GamesManager.init();
 });
