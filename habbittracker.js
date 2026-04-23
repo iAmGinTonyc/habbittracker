@@ -788,7 +788,7 @@ function addNewHabit(habit) {
                     el.className = `card${card.flipped || card.matched ? ' flipped' : ''}${card.matched ? ' matched' : ''}`;
                     el.dataset.id = card.id;
                     const back = document.createElement('div'); back.className = 'card-back'; back.innerHTML = '<span style="font-size:24px;color:#888">?</span>'; el.appendChild(back);
-                    const img = document.createElement('img'); img.src = `pics for games/${card.img}`; img.alt = ''; img.draggable = false;
+                    const img = document.createElement('img'); img.src = `pics/${card.img}`; img.alt = ''; img.draggable = false;
                     img.onerror = () => { img.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect fill="%23ddd" width="100" height="100"/></svg>'; };
                     el.appendChild(img); el.addEventListener('click', () => flip(card.id)); gameGrid.appendChild(el);
                 });
