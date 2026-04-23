@@ -53,6 +53,36 @@ document.addEventListener('DOMContentLoaded', () => {
         minim: 'Простота и минимализм', nature: 'Гармония с природой'
     };
 
+    // === МАППИНГ ЦЕЛЕЙ К ИДЕНТИЧНОСТЯМ ===
+const goalIdentityMap = {
+    // Атлет
+    energy: 'athlete',
+    body: 'athlete',
+    health: 'athlete',
+    sport: 'athlete',
+    discipline: 'athlete',
+    flex: 'athlete',
+    recovery: 'athlete',
+    
+    // Студент
+    expert: 'student',
+    lang: 'student',
+    focus: 'student',
+    creative: 'student',
+    career: 'student',
+    memory: 'student',
+    system: 'student',
+    
+    // Монах
+    silence: 'monk',
+    aware: 'monk',
+    detox: 'monk',
+    emotion: 'monk',
+    spirit: 'monk',
+    minim: 'monk',
+    nature: 'monk'
+};
+
     const phrases = [
         "Повторение — это не рутина. Это ритм, в котором рождается мастерство.",
         "Ты не становишься кем-то за один день. Каждое действие — это голос за того, кем ты хочешь стать.",
@@ -72,6 +102,16 @@ document.addEventListener('DOMContentLoaded', () => {
         const xpNeeded = Math.floor(15 * Math.pow(level, 1.8));
         const xpPerHabit = 5 + (level - 1) * 3;
         return { xpNeeded, xpPerHabit };
+    }
+
+    // === РАСЧЁТ ДОСТУПНЫХ СЛОТОВ ПРИВЫЧЕК ===
+    function getMaxHabitsForLevel(level) {
+        if (level >= 11) return 8;
+        if (level >= 9) return 7;
+        if (level >= 7) return 6;
+        if (level >= 5) return 5;
+        if (level >= 3) return 4;
+        return 3; // Базово на уровне 1
     }
 
     // === ГЛОБАЛЬНОЕ СОСТОЯНИЕ (DASHBOARD) ===
@@ -102,12 +142,17 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // === ИНИЦИАЛИЗАЦИЯ ПРИЛОЖЕНИЯ ===
+// === ИНИЦИАЛИЗАЦИЯ ПРИЛОЖЕНИЯ ===
 function init() {
     const saved = loadProgress();
     if (saved && saved.identity) {
         dashState = saved;
-        window.dashState = dashState;  // ← ОБНОВЛЯЕМ ГЛОБАЛЬНУЮ ССЫЛКУ!
+        window.dashState = dashState;
+        
+        // ← ВОССТАНАВЛИВАЕМ selectedGoals ИЗ dashState.habits
+        selectedIdentity = dashState.identity;
+        selectedGoals[dashState.identity] = [...new Set(dashState.habits.map(h => h.id))];
+        
         checkNewDay();
         showDashboard();
     } else {
@@ -373,8 +418,12 @@ function init() {
     function renderDashboardHabits() {
         const list = document.getElementById('dash-habit-list');
         list.innerHTML = '';
+        
         const stats = getLevelStats(dashState.level);
-
+        const maxHabits = getMaxHabitsForLevel(dashState.level);
+        const currentHabits = dashState.habits.length;
+    
+        // 1. Заполненные привычки
         dashState.habits.forEach((habit, index) => {
             const row = document.createElement('div');
             row.className = `dash-habit-row ${habit.completed ? 'completed' : ''}`;
@@ -385,7 +434,142 @@ function init() {
             row.addEventListener('click', () => toggleHabit(index, row));
             list.appendChild(row);
         });
+    
+        // 2. Пустые РАЗБЛОКИРОВАННЫЕ слоты (кликабельные!)
+        const emptyUnlockedSlots = maxHabits - currentHabits;
+        for (let i = 0; i < emptyUnlockedSlots; i++) {
+            const row = document.createElement('div');
+            row.className = 'dash-habit-row dash-habit-empty unlocked';
+            row.innerHTML = `
+                <span class="dash-habit-text">Добавить привычку</span>
+                <span class="lock-icon-right">🔓</span>
+            `;
+            // ← ВКЛЮЧАЕМ КЛИК!
+            row.addEventListener('click', () => openHabitSelector());
+            list.appendChild(row);
+        }
+    
+        // 3. Заблокированные слоты
+        const totalSlots = 8;
+        const lockedSlots = totalSlots - maxHabits;
+        for (let i = 0; i < lockedSlots; i++) {
+            const slotNumber = maxHabits + i + 1;
+            let unlockLevel = 0;
+            if (slotNumber === 4) unlockLevel = 3;
+            else if (slotNumber === 5) unlockLevel = 5;
+            else if (slotNumber === 6) unlockLevel = 7;
+            else if (slotNumber === 7) unlockLevel = 9;
+            else if (slotNumber === 8) unlockLevel = 11;
+            
+            const row = document.createElement('div');
+            row.className = 'dash-habit-row dash-habit-empty locked';
+            row.innerHTML = `
+                <span class="dash-habit-text">Уровень ${unlockLevel}</span>
+                <span class="lock-icon-right">🔒</span>
+            `;
+            list.appendChild(row);
+        }
     }
+
+    // === МОДАЛЬНОЕ ОКНО ВЫБОРА ПРИВЫЧКИ ===
+    function openHabitSelector() {
+        const modal = document.getElementById('habit-selector-modal');
+        const list = document.getElementById('habit-selector-list');
+        const subtitle = document.querySelector('.habit-selector-subtitle');
+        const closeBtn = document.getElementById('habit-selector-close');
+        
+        if (!modal || !list) return;
+        
+        const identityId = dashState.identity;
+        const availableHabits = [];
+        
+        // ← СОБИРАЕМ ВСЕ привычки этой идентичности (не только выбранные цели!)
+        for (const [goalId, habits] of Object.entries(goalHabits)) {
+            // Проверяем, принадлежит ли цель текущей идентичности
+            if (goalIdentityMap[goalId] === identityId) {
+                habits.forEach(habitText => {
+                    // Не добавляем если уже есть в dashState
+                    const alreadyAdded = dashState.habits.some(h => h.text === habitText);
+                    if (!alreadyAdded) {
+                        availableHabits.push({
+                            goalId: goalId,
+                            text: habitText
+                        });
+                    }
+                });
+            }
+        }
+        
+        subtitle.textContent = `доступно ${availableHabits.length} вариантов`;
+        
+        list.innerHTML = '';
+        if (availableHabits.length === 0) {
+            list.innerHTML = '<div style="text-align:center;color:#999;padding:20px;">Все привычки уже добавлены!</div>';
+        } else {
+            // Сортируем по алфавиту для удобства
+            availableHabits.sort((a, b) => a.text.localeCompare(b.text));
+            
+            availableHabits.forEach(habit => {
+                const option = document.createElement('div');
+                option.className = 'habit-option';
+                option.textContent = habit.text;
+                option.addEventListener('click', () => {
+                    addNewHabit(habit);
+                    closeModal();
+                });
+                list.appendChild(option);
+            });
+        }
+        
+        modal.classList.add('active');
+        
+        // Кнопка крестик
+        if (closeBtn) {
+            closeBtn.onclick = closeModal;
+        }
+        
+        // Клик вне окна
+        modal.onclick = (e) => { if (e.target === modal) closeModal(); };
+        
+        // Esc
+        document.addEventListener('keydown', handleEsc);
+    }
+
+function closeModal() {
+    const modal = document.getElementById('habit-selector-modal');
+    if (modal) modal.classList.remove('active');
+    document.removeEventListener('keydown', handleEsc);
+}
+
+function handleEsc(e) {
+    if (e.key === 'Escape') closeModal();
+}
+
+function addNewHabit(habit) {
+    // Добавляем привычку в dashState
+    dashState.habits.push({
+        id: habit.goalId,
+        text: habit.text,
+        completed: false
+    });
+    
+    // Сохраняем
+    saveProgress();
+    
+    // Обновляем дашборд
+    renderDashboardHabits();
+    updateProgressUI();
+    
+    // Добавляем класс анимации к новому элементу
+    setTimeout(() => {
+        const list = document.getElementById('dash-habit-list');
+        const lastItem = list.lastElementChild;
+        if (lastItem && lastItem.classList.contains('unlocked')) {
+            // Это был пустой слот, теперь он заполнен
+            renderDashboardHabits(); // Перерисовываем всё
+        }
+    }, 100);
+}
 
     function toggleHabit(index, rowElement) {
         if (dashState.habits[index].completed) return; 
@@ -401,6 +585,8 @@ function init() {
             levelEl.style.transform = "scale(1.5)";
             levelEl.style.color = "#111";
             setTimeout(() => { levelEl.style.transform = "scale(1)"; }, 300);
+
+            renderDashboardHabits();
         }
         updateProgressUI();
         saveProgress();
