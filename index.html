@@ -119,6 +119,11 @@
             </div>
         </div>
 
+        <!-- Кнопка мини-игр -->
+        <div class="games-trigger-wrapper">
+            <button class="games-trigger-btn" id="games-trigger">🧠 Тренировка</button>
+        </div>
+
         <div class="dash-footer">
             <div class="progress-container">
                 <div class="progress-label">
@@ -133,6 +138,52 @@
     </section>
 
     <script src="habbittracker.js"></script>
+
+    <!-- Модальное окно для мини-игр -->
+<div id="games-modal" class="games-modal">
+    <div class="games-modal-content">
+        <button class="games-close-btn" id="games-close">✕</button>
+        
+        <!-- Меню выбора игры -->
+        <div id="games-menu" class="games-screen active">
+            <h2 class="games-title">Выбери тренировку</h2>
+            <div class="games-list">
+                <button class="game-card" data-game="count">
+                    <span class="game-icon">🔢</span>
+                    <span class="game-name">Посчитай</span>
+                    <span class="game-desc">Быстрый счёт на время</span>
+                </button>
+                <button class="game-card" data-game="memory">
+                    <span class="game-icon">🃏</span>
+                    <span class="game-name">Найди пару</span>
+                    <span class="game-desc">Тренировка зрительной памяти</span>
+                </button>
+                <button class="game-card" data-game="words">
+                    <span class="game-icon">📝</span>
+                    <span class="game-name">Повтори 10 слов</span>
+                    <span class="game-desc">Запомни и введи слова</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Контейнер для активной игры -->
+        <div id="games-container" class="games-screen">
+            <div id="game-content"></div>
+        </div>
+
+        <!-- Экран результата игры -->
+        <div id="games-result" class="games-screen">
+            <h2 class="games-title" id="result-title">Результат</h2>
+            <p class="games-result-text" id="result-message"></p>
+            <div class="games-xp-badge" id="result-xp">+5 XP</div>
+            <div class="games-result-buttons">
+                <button class="games-btn primary" id="result-retry">Ещё раз</button>
+                <button class="games-btn secondary" id="result-menu">В меню</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 </body>
 
 <div id="loading-overlay" class="loading-overlay">
