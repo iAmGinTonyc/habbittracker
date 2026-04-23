@@ -305,6 +305,91 @@ body {
 }
 .dash-habit-row.completed .dash-habit-xp { opacity: 0.3; transform: scale(0.9); }
 
+
+/* =========================================
+   ПУСТЫЕ СЛОТЫ ПРИВЫЧЕК (МИНИМАЛИЗМ)
+   ========================================= */
+   .dash-habit-row.dash-habit-empty {
+    padding: 15px 0;
+    border-bottom: 1px solid #f5f5f5;
+    cursor: default;
+    opacity: 0.5;
+    transition: opacity 0.2s ease;
+}
+
+/* Разблокированный пустой слот */
+.dash-habit-row.dash-habit-empty.unlocked {
+    cursor: pointer;
+    opacity: 0.6;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+}
+
+.dash-habit-row.dash-habit-empty.unlocked:hover {
+    opacity: 1;
+    background: #fafafa;
+}
+
+.dash-habit-row.dash-habit-empty.unlocked .dash-habit-text {
+    color: #999;
+    font-style: italic;
+}
+
+.dash-habit-row.dash-habit-empty.unlocked:hover .dash-habit-text {
+    color: #666;
+}
+
+/* Заблокированный слот */
+.dash-habit-row.dash-habit-empty.locked {
+    opacity: 0.3;
+    cursor: not-allowed;
+    background: transparent;
+    border: none;
+}
+
+.dash-habit-row.dash-habit-empty.locked .dash-habit-text {
+    color: #bbb;
+    font-size: 14px;
+}
+
+/* Замок СПРАВА (где был XP) */
+.lock-icon-right {
+    font-size: 14px;
+    color: #ccc;
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+}
+
+.dash-habit-empty.unlocked .lock-icon-right { color: #999; }
+.dash-habit-empty.locked .lock-icon-right { color: #ddd; }
+
+.lock-text {
+    font-size: 13px;
+    color: #bbb;
+    margin-right: 5px;
+}
+
+.dash-habit-xp-empty {
+    display: none;
+}
+/* Анимация появления новых слотов */
+@keyframes slotUnlock {
+    0% {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.dash-habit-row.newly-unlocked {
+    animation: slotUnlock 0.5s ease forwards;
+}
+
 /* Подвал - центрирование */
 .dash-footer { 
     margin-top: auto; 
@@ -350,6 +435,148 @@ body {
 .games-trigger-btn:active {
     transform: translateY(0);
 }
+
+/* =========================================
+   МОДАЛЬНОЕ ОКНО ВЫБОРА ПРИВЫЧКИ
+   ========================================= */
+   .habit-selector-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.95);
+    z-index: 2500;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.habit-selector-modal.active {
+    display: flex;
+}
+
+.habit-selector-content {
+    position: relative;
+    width: 100%;
+    max-width: 500px;
+    max-height: 80vh;
+    background: #fff;
+    border-radius: 16px;
+    padding: 30px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+    display: flex;
+    flex-direction: column;
+}
+
+.habit-selector-close {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    width: 32px;
+    height: 32px;
+    font-size: 18px;
+    color: #999;
+    background: none;
+    border: none;
+    cursor: pointer;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.habit-selector-close:hover {
+    color: #111;
+    background: #f5f5f5;
+}
+
+.habit-selector-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: #111;
+    margin-bottom: 5px;
+    text-align: center;
+}
+
+.habit-selector-subtitle {
+    font-size: 14px;
+    color: #888;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.habit-selector-list {
+    flex: 1;
+    overflow-y: auto;
+    max-height: 50vh;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding-right: 5px;
+}
+
+.habit-option {
+    padding: 14px 16px;
+    background: #fff;
+    border: 1px solid #e5e5e5;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 15px;
+    color: #333;
+    text-align: left;
+}
+
+.habit-option:hover {
+    border-color: #111;
+    background: #fafafa;
+    transform: translateX(3px);
+}
+
+.habit-option:active {
+    transform: translateX(0);
+    background: #f0f0f0;
+}
+
+/* Скроллбар для списка */
+.habit-selector-list::-webkit-scrollbar {
+    width: 4px;
+}
+
+.habit-selector-list::-webkit-scrollbar-track {
+    background: #f5f5f5;
+    border-radius: 2px;
+}
+
+.habit-selector-list::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 2px;
+}
+
+.habit-selector-list::-webkit-scrollbar-thumb:hover {
+    background: #999;
+}
+
+/* Адаптив */
+@media (max-width: 600px) {
+    .habit-selector-content {
+        padding: 20px;
+        max-height: 90vh;
+    }
+    
+    .habit-selector-list {
+        max-height: 60vh;
+    }
+    
+    .habit-option {
+        padding: 12px 14px;
+        font-size: 14px;
+    }
+}
+
 
 /* =========================================
    МОДАЛЬНОЕ ОКНО ИГР
