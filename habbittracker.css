@@ -318,6 +318,498 @@ body {
 .progress-bar { height: 4px; background: #f0f0f0; border-radius: 2px; overflow: hidden; }
 .progress-fill { height: 100%; background: #111; width: 0%; transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
 
+/* =========================================
+   МИНИ-ИГРЫ: КОНТЕЙНЕР И КНОПКИ
+   ========================================= */
+   .games-trigger-wrapper {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin: 20px 0 30px;
+}
+
+.games-trigger-btn {
+    padding: 12px 32px;
+    font-size: 15px;
+    font-weight: 500;
+    color: #111;
+    background: #fff;
+    border: 2px solid #111;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    letter-spacing: 0.3px;
+}
+
+.games-trigger-btn:hover {
+    background: #111;
+    color: #fff;
+    transform: translateY(-2px);
+}
+
+.games-trigger-btn:active {
+    transform: translateY(0);
+}
+
+/* =========================================
+   МОДАЛЬНОЕ ОКНО ИГР
+   ========================================= */
+.games-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.98);
+    z-index: 2000;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    animation: modalFadeIn 0.3s ease;
+}
+
+.games-modal.active {
+    display: flex;
+}
+
+@keyframes modalFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.games-modal-content {
+    position: relative;
+    width: 100%;
+    max-width: 900px;
+    max-height: 90vh;
+    background: #fff;
+    border-radius: 16px;
+    padding: 30px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Кнопка выхода из игры */
+#game-exit-btn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    padding: 8px 16px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #888;
+    background: transparent;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: none;
+    align-items: center;
+    gap: 6px;
+}
+
+#game-exit-btn:hover {
+    color: #111;
+    border-color: #111;
+    background: #f5f5f5;
+}
+
+.games-close-btn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 36px;
+    height: 36px;
+    font-size: 20px;
+    color: #888;
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.games-close-btn:hover {
+    color: #111;
+    background: #f5f5f5;
+}
+
+/* =========================================
+   ЭКРАНЫ ВНУТРИ МОДАЛКИ
+   ========================================= */
+.games-screen {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.games-screen.active {
+    display: flex;
+}
+
+.games-title {
+    font-size: 24px;
+    font-weight: 600;
+    color: #111;
+    margin-bottom: 25px;
+    text-align: center;
+    letter-spacing: -0.3px;
+}
+
+/* =========================================
+   МЕНЮ ВЫБОРА ИГР
+   ========================================= */
+.games-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    width: 100%;
+    max-width: 700px;
+}
+
+.game-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    background: #fff;
+    border: 2px solid #e5e5e5;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+}
+
+.game-card:hover {
+    border-color: #111;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+}
+
+.game-card:active {
+    transform: translateY(0);
+}
+
+.game-icon {
+    font-size: 32px;
+    margin-bottom: 12px;
+}
+
+.game-name {
+    font-size: 16px;
+    font-weight: 600;
+    color: #111;
+    margin-bottom: 6px;
+}
+
+.game-desc {
+    font-size: 13px;
+    color: #666;
+    line-height: 1.4;
+}
+
+/* =========================================
+   КОНТЕЙНЕР ИГРЫ
+   ========================================= */
+#games-container {
+    flex: 1;
+    overflow: hidden;
+    width: 100%;
+    max-height: 70vh;
+}
+
+#game-content {
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 10px;
+}
+
+/* =========================================
+   ОБЩИЕ СТИЛИ ДЛЯ ИГР
+   ========================================= */
+.game-setup,
+.game-area,
+.game-results {
+    text-align: center;
+    width: 100%;
+    max-width: 500px;
+    margin: 0 auto;
+    transition: background-color 0.3s ease;
+}
+
+.game-timer {
+    font-size: 32px;
+    color: #111;
+    font-weight: 600;
+    margin: 15px 0 25px;
+}
+
+.game-equation {
+    font-size: 36px;
+    margin: 20px 0;
+    font-weight: 500;
+}
+
+.game-input {
+    padding: 12px;
+    font-size: 24px;
+    width: 150px;
+    text-align: center;
+    border: 2px solid #e5e5e5;
+    border-radius: 8px;
+    margin-top: 20px;
+    transition: border-color 0.2s;
+}
+
+.game-input:focus {
+    outline: none;
+    border-color: #111;
+}
+
+.difficulty-btn {
+    display: block;
+    margin: 10px auto;
+    padding: 12px 20px;
+    font-size: 15px;
+    width: 250px;
+    border: 2px solid #111;
+    border-radius: 8px;
+    background: #fff;
+    color: #111;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.difficulty-btn:hover {
+    background: #111;
+    color: #fff;
+}
+
+/* =========================================
+   ИГРА "НАЙДИ ПАРУ" (КАРТОЧКИ)
+   ========================================= */
+#game-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 8px;
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.card {
+    position: relative;
+    aspect-ratio: 2/3;
+    border-radius: 8px;
+    cursor: pointer;
+    background: #f5f5f5;
+    border: 2px solid #e5e5e5;
+    transition: transform 0.2s, border-color 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.card:hover {
+    transform: scale(1.03);
+    border-color: #111;
+}
+
+.card.flipped,
+.card.matched {
+    border-color: #111;
+    background: #fff;
+}
+
+.card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity 0.2s;
+    pointer-events: none;
+}
+
+.card.flipped img,
+.card.matched img {
+    opacity: 1;
+}
+
+.card .card-back {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, #e5e5e5 0%, #f0f0f0 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    color: #888;
+    font-weight: bold;
+    border-radius: 6px;
+}
+
+.card.flipped .card-back,
+.card.matched .card-back {
+    display: none;
+}
+
+/* =========================================
+   ИГРА "ПОВТОРИ СЛОВА"
+   ========================================= */
+.word-placeholders {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 20px;
+}
+
+.word-placeholder {
+    width: 90px;
+    height: 36px;
+    border: 1px solid #e5e5e5;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    color: #666;
+    background: #fafafa;
+}
+
+.word-placeholder.filled {
+    border-color: #111;
+    color: #111;
+    font-weight: 500;
+    background: #fff;
+}
+
+/* =========================================
+   ЭКРАН РЕЗУЛЬТАТА ИГРЫ
+   ========================================= */
+.games-result-text {
+    font-size: 16px;
+    color: #555;
+    margin: 10px 0 20px;
+    text-align: center;
+}
+
+.games-xp-badge {
+    font-size: 28px;
+    font-weight: 700;
+    color: #111;
+    background: #f5f5f5;
+    padding: 12px 24px;
+    border-radius: 12px;
+    margin-bottom: 25px;
+}
+
+.games-result-buttons {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.games-btn {
+    padding: 12px 24px;
+    font-size: 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 2px solid #111;
+    font-weight: 500;
+}
+
+.games-btn.primary {
+    background: #111;
+    color: #fff;
+}
+
+.games-btn.primary:hover {
+    background: #333;
+}
+
+.games-btn.secondary {
+    background: #fff;
+    color: #111;
+}
+
+.games-btn.secondary:hover {
+    background: #f5f5f5;
+}
+
+/* =========================================
+   АДАПТИВ ДЛЯ МОБИЛЬНЫХ
+   ========================================= */
+@media (max-width: 900px) {
+    #game-grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 6px;
+    }
+    
+    .games-modal-content {
+        padding: 20px;
+        border-radius: 12px;
+    }
+    
+    .games-title {
+        font-size: 20px;
+    }
+    
+    .game-card {
+        padding: 16px;
+    }
+    
+    .game-icon {
+        font-size: 28px;
+    }
+    
+    .game-name {
+        font-size: 15px;
+    }
+}
+
+@media (max-width: 600px) {
+    #game-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 4px;
+    }
+    
+    .card {
+        aspect-ratio: 3/4;
+    }
+    
+    .game-equation {
+        font-size: 28px;
+    }
+    
+    .game-input {
+        font-size: 20px;
+        width: 120px;
+    }
+    
+    .word-placeholder {
+        width: 75px;
+        height: 32px;
+        font-size: 13px;
+    }
+    
+    .game-timer {
+        font-size: 28px;
+    }
+}
+
 /* Адаптив */
 @media (max-width: 900px) {
     .wolf-avatar-img { width: 300px; } #intro-text { font-size: 32px; }
