@@ -149,9 +149,18 @@ function init() {
         dashState = saved;
         window.dashState = dashState;
         
-        // ← ВОССТАНАВЛИВАЕМ selectedGoals ИЗ dashState.habits
+        // ← ВОССТАНАВЛИВАЕМ selectedIdentity и selectedGoals
         selectedIdentity = dashState.identity;
+        
+        // Восстанавливаем выбранные цели из сохранённых привычек
         selectedGoals[dashState.identity] = [...new Set(dashState.habits.map(h => h.id))];
+        
+        // Визуально отмечаем идентичность как активную (если мы на экране выбора)
+        const identityItem = document.querySelector(`.identity-item[data-id="${dashState.identity}"]`);
+        if (identityItem && identityScreen.classList.contains('visible')) {
+            identityItem.classList.add('active');
+            updateConfirmButton(identityItem);
+        }
         
         checkNewDay();
         showDashboard();
