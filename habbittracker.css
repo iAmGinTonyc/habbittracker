@@ -14,7 +14,6 @@ body {
     overflow: hidden;
 }
 
-
 /* =========================================
    ЭКРАН 1: ИНТРО
    ========================================= */
@@ -1037,6 +1036,43 @@ body {
         font-size: 28px;
     }
 }
+
+
+/* =========================================
+   АНИМАЦИЯ ПОВЫШЕНИЯ УРОВНЯ (ПЛАВНО, БЕЗ ПРЫЖКОВ)
+   ========================================= */
+   .level-up-animation {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    z-index: 3000;
+    pointer-events: none;
+    /* Спрятано за границей экрана */
+    transform: translate(100%, 100%);
+    /* Плавное замедление без отскока */
+    transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+    will-change: transform;
+}
+
+.level-up-animation.show {
+    /* Встаёт впритык к правому нижнему углу */
+    transform: translate(0, 0);
+}
+
+.level-up-wolf {
+    width: 600px;
+    height: auto;
+    display: block;
+    margin: 0;
+    padding: 0;
+}
+
+/* Адаптив */
+@media (max-width: 900px) { .level-up-wolf { width: 300px; } }
+@media (max-width: 600px) { .level-up-wolf { width: 200px; } }
 
 /* Адаптив */
 @media (max-width: 900px) {
