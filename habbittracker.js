@@ -595,6 +595,8 @@ function addNewHabit(habit) {
             levelEl.style.color = "#111";
             setTimeout(() => { levelEl.style.transform = "scale(1)"; }, 300);
 
+            showLevelUpAnimation(dashState.level);
+            
             renderDashboardHabits();
         }
         updateProgressUI();
@@ -633,6 +635,37 @@ function addNewHabit(habit) {
             selectedIdentity = null;
         }
     });
+
+    // === АНИМАЦИЯ ПОВЫШЕНИЯ УРОВНЯ ===
+const wolfImages = [
+    'Sneaky wolf 1.png',
+    'Sneaky wolf 2.png',
+    'Sneaky wolf 3.png',
+    'Sneaky wolf 4.png',
+    'Sneaky wolf 5.png',
+    'Sneaky wolf 6.png'
+];
+
+function showLevelUpAnimation() {
+    const animation = document.getElementById('level-up-animation');
+    const wolfImg = document.getElementById('level-up-wolf-img');
+    
+    if (!animation || !wolfImg) return;
+    
+    // Выбираем случайную картинку
+    const randomWolf = wolfImages[Math.floor(Math.random() * wolfImages.length)];
+    wolfImg.src = `pics/${randomWolf}`;
+    
+    // Показываем (выезжает)
+    animation.classList.add('show');
+    
+    // Стоит 7 секунды и уезжает обратно
+    setTimeout(() => {
+        animation.classList.remove('show');
+    }, 7000);
+}
+
+    
 
     // === 🎮 ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ДЛЯ ИГР ===
     window.dashState = dashState;
