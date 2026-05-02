@@ -8,8 +8,7 @@
 </head>
 <body>
 
-    
-    <!-- ЭКРАН 1: Приветствие Волка -->
+    <!-- ЭКРАН 1: ИНТРО -->
     <section id="intro-screen">
         <div class="wolf-container">
             <img src="pics/wolf_master.jpeg" alt="Мастер-волк" class="wolf-avatar-img">
@@ -20,17 +19,13 @@
         </div>
     </section>
 
-    <!-- ЭКРАН 2: Идентичность + Список Целей (7 штук) -->
+    <!-- ЭКРАН 2: ИДЕНТИЧНОСТЬ -->
     <section id="identity-screen" class="hidden">
         <h2 class="screen-title">Кем ты хочешь стать?</h2>
         <p class="global-hint">выбери идентичность, затем до 3-х главных целей</p>
-        
         <div class="identity-row">
-            <!-- Атлет -->
             <div class="identity-item" data-id="athlete">
-                <div class="identity-header">
-                    <span class="identity-name">Атлет</span>
-                </div>
+                <div class="identity-header"><span class="identity-name">Атлет</span></div>
                 <div class="identity-habits">
                     <div class="habit" data-habit="energy">Вечная энергия</div>
                     <div class="habit" data-habit="body">Тело мечты</div>
@@ -42,14 +37,9 @@
                 </div>
                 <div class="confirm-wrapper"></div>
             </div>
-            
             <div class="separator"></div>
-
-            <!-- Студент -->
             <div class="identity-item" data-id="student">
-                <div class="identity-header">
-                    <span class="identity-name">Студент</span>
-                </div>
+                <div class="identity-header"><span class="identity-name">Студент</span></div>
                 <div class="identity-habits">
                     <div class="habit" data-habit="expert">Глубокая экспертиза</div>
                     <div class="habit" data-habit="lang">Владение языком</div>
@@ -61,14 +51,9 @@
                 </div>
                 <div class="confirm-wrapper"></div>
             </div>
-
             <div class="separator"></div>
-
-            <!-- Монах -->
             <div class="identity-item" data-id="monk">
-                <div class="identity-header">
-                    <span class="identity-name">Монах</span>
-                </div>
+                <div class="identity-header"><span class="identity-name">Монах</span></div>
                 <div class="identity-habits">
                     <div class="habit" data-habit="silence">Внутренняя тишина</div>
                     <div class="habit" data-habit="aware">Осознанность 24/7</div>
@@ -83,48 +68,116 @@
         </div>
     </section>
 
-    <!-- ЭКРАН 3: Эволюция привычек (Слайдеры) -->
+    <!-- ЭКРАН 3: ЭВОЛЮЦИЯ -->
     <section id="evolution-screen" class="hidden">
         <div class="back-arrow" id="back-btn">←</div>
-        
         <div class="evo-header">
             <h2 class="evo-title" id="evo-title">Студент</h2>
             <p class="evo-subtitle">выбери конкретную привычку для каждой цели</p>
         </div>
-
         <div class="evo-list" id="evo-list"></div>
-
         <button class="evo-confirm-btn" id="evo-final-confirm">зафиксировать путь</button>
     </section>
 
-    <!-- ЭКРАН 4: ДАШБОРД (Главный экран) -->
+    <!-- ЭКРАН 4: ДАШБОРД -->
     <section id="dashboard-screen" class="hidden">
-        <!-- Кнопка сброса (для тестов) -->
         <div class="reset-btn" id="reset-btn">↺</div>
-        
         <div class="dash-header">
             <span class="dash-top-label">Твой путь:</span>
             <div class="dash-info-row">
                 <h1 id="dash-identity-name">Студент</h1>
                 <div class="dash-level">
                     <span class="level-label">ур.</span>
-                    <span class="level-value" id="dash-level-value">2</span>
+                    <span class="level-value" id="dash-level-value">1</span>
                 </div>
             </div>
         </div>
 
+        <!-- ЦЕНТРАЛЬНАЯ ОБЛАСТЬ С КОНТЕНТОМ -->
         <div class="dash-content">
-            <h3 class="dash-subtitle">Задачи на сегодня</h3>
-            <div id="dash-habit-list">
-                <!-- Привычки рендерятся через JS -->
+            <!-- Привычки -->
+            <div id="view-habits" class="dash-view active">
+                <h3 class="dash-subtitle">Задачи на сегодня</h3>
+                <div class="timer-subtitle" id="reset-timer">до обновления: 00:00:00</div>
+                <div id="dash-habit-list"></div>
             </div>
+            
+            <!-- Тренировка -->
+            <div id="view-training" class="dash-view">
+                <h3 class="dash-subtitle">Мини-игры</h3>
+                <div id="training-games-container"></div>
+            </div>
+            
+                    <!-- Утренний чек-ап -->
+                    <div id="view-morning" class="dash-view">
+                        <div class="checkin-header-row">
+                            <h3 class="dash-subtitle" style="margin-bottom:0">🌅 Утренний чек-ап</h3>
+                            <span class="checkin-date-label" id="date-label-morning"></span>
+                            <button class="history-btn" id="history-btn-morning" title="История">📅</button>
+                        </div>
+                        <!-- Скрытый инпут для даты -->
+                        <input type="date" id="date-input-morning" style="position: absolute; width: 1px; height: 1px; opacity: 0;">
+                        
+                        <div class="checkin-form" id="morning-form" data-type="morning">
+                            <div class="checkin-group"><label>Во сколько лёг в кровать?</label><input type="time" class="checkin-time" data-key="bedTime"></div>
+                            <div class="checkin-group"><label>Во сколько уснул?</label><input type="time" class="checkin-time" data-key="sleepTime"></div>
+                            <div class="checkin-group"><label>Во сколько проснулся?</label><input type="time" class="checkin-time" data-key="wakeTime"></div>
+                            <div class="checkin-group"><label>Качество сна</label><div class="scale-container" data-key="sleepQuality"></div></div>
+                            <div class="checkin-group"><label>Уровень энергии утром</label><div class="scale-container" data-key="energy"></div></div>
+                            <div class="checkin-group"><label>Настрой / Мотивация</label><div class="scale-container" data-key="mood"></div></div>
+                            <div class="checkin-group"><label>Главный фокус на сегодня</label><input type="text" class="checkin-text" data-key="focus" placeholder="Например, закрыть сложный проект"></div>
+                            
+                            <div class="checkin-save-wrapper">
+                                <button class="checkin-save-btn" id="save-morning-btn">💾 Сохранить чек-ап</button>
+                                <div class="save-status-row">
+                                    <span class="checkin-save-status" id="status-morning"></span>
+                                    <button class="checkin-edit-btn" id="edit-morning-btn" style="display:none;">✏️ Редактировать</button>
+                                </div>
+                                <button class="checkin-analytics-btn">📊 Аналитика</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Вечерний чек-ап -->
+                    <div id="view-evening" class="dash-view">
+                        <div class="checkin-header-row">
+                            <h3 class="dash-subtitle" style="margin-bottom:0">🌙 Вечерний чек-ап</h3>
+                            <span class="checkin-date-label" id="date-label-evening"></span>
+                            <button class="history-btn" id="history-btn-evening" title="История">📅</button>
+                        </div>
+                        <!-- Скрытый инпут для даты -->
+                        <input type="date" id="date-input-evening" style="position: absolute; width: 1px; height: 1px; opacity: 0;">
+        
+                        <div class="checkin-form" id="evening-form" data-type="evening">
+                            <div class="checkin-group"><label>Общая оценка дня</label><div class="scale-container" data-key="dayRate"></div></div>
+                            <div class="checkin-group"><label>Уровень энергии сейчас</label><div class="scale-container" data-key="energy"></div></div>
+                            <div class="checkin-group"><label>Удовлетворённость результатами</label><div class="scale-container" data-key="satisfaction"></div></div>
+                            <div class="checkin-group"><label>Уровень спокойствия</label><div class="scale-container" data-key="calm"></div></div>
+                            <div class="checkin-group"><label>Качество выполнения привычек</label><div class="scale-container" data-key="habitQuality"></div></div>
+                            <div class="checkin-group"><label>За что благодарен сегодня?</label><input type="text" class="checkin-text" data-key="gratitude" placeholder="Например, за продуктивную встречу"></div>
+                            <div class="checkin-group"><label>Что улучшить завтра?</label><input type="text" class="checkin-text" data-key="improve" placeholder="Например, лечь раньше"></div>
+                            
+                            <div class="checkin-save-wrapper">
+                                <button class="checkin-save-btn" id="save-evening-btn">💾 Сохранить чек-ап</button>
+                                <div class="save-status-row">
+                                    <span class="checkin-save-status" id="status-evening"></span>
+                                    <button class="checkin-edit-btn" id="edit-evening-btn" style="display:none;">✏️ Редактировать</button>
+                                </div>
+                                <button class="checkin-analytics-btn">📊 Аналитика</button>
+                            </div>
+                        </div>
+                    </div>
         </div>
 
-        <!-- Кнопка мини-игр -->
-        <div class="games-trigger-wrapper">
-            <button class="games-trigger-btn" id="games-trigger">🧠 Тренировка</button>
+        <!-- КНОПКИ ПЕРЕКЛЮЧЕНИЯ (2×2) -->
+        <div class="view-switcher">
+            <button class="view-btn active" data-view="habits">📋 Привычки</button>
+            <button class="view-btn" data-view="training">🧠 Тренировка</button>
+            <button class="view-btn" data-view="morning" id="btn-morning">🌅 Утро</button>
+            <button class="view-btn" data-view="evening" id="btn-evening">🌙 Вечер</button>
         </div>
 
+        <!-- ПРОГРЕСС -->
         <div class="dash-footer">
             <div class="progress-container">
                 <div class="progress-label">
@@ -138,74 +191,38 @@
         </div>
     </section>
 
+    <!-- МОДАЛКА: НАСТРОЙКИ ПРИВЫЧКИ -->
+    <div id="habit-settings-modal" class="habit-settings-modal">
+        <div class="habit-settings-content">
+            <div class="habit-settings-header"><h3>Настройки</h3><button class="habit-settings-close" id="habit-settings-close">✕</button></div>
+            <div class="habit-settings-body">
+                <div class="setting-formula"><span class="formula-text">Я сделаю это после того, как</span><input type="text" id="setting-trigger-input" class="formula-input" placeholder="например, выпью кофе"></div>
+                <div class="setting-reminder"><div class="toggle-wrapper"><input type="checkbox" id="setting-reminder-toggle" class="toggle-checkbox"><label for="setting-reminder-toggle" class="toggle-label">Напомнить в:</label></div><input type="time" id="setting-time-input" class="time-input" disabled></div>
+            </div>
+            <div class="habit-settings-footer"><button class="settings-btn cancel" id="settings-cancel-btn">Отмена</button><button class="settings-btn save" id="settings-save-btn">Сохранить</button></div>
+        </div>
+    </div>
+
+    <!-- МОДАЛКА: ВЫБОР ПРИВЫЧКИ -->
+    <div id="habit-selector-modal" class="habit-selector-modal">
+        <div class="habit-selector-content">
+            <button class="habit-selector-close" id="habit-selector-close">✕</button>
+            <h3 class="habit-selector-title">Выбери привычку</h3>
+            <p class="habit-selector-subtitle">для твоей цели</p>
+            <div class="habit-selector-list" id="habit-selector-list"></div>
+        </div>
+    </div>
+
+    <!-- АНИМАЦИЯ УРОВНЯ -->
+    <div id="level-up-animation" class="level-up-animation">
+        <img id="level-up-wolf-img" src="pics/Sneaky wolf 1.png" alt="Level Up!" class="level-up-wolf">
+    </div>
+
+    <!-- ЗАГРУЗКА -->
+    <div id="loading-overlay" class="loading-overlay">
+        <div class="loading-text">терпение — ключ к успеху...</div>
+    </div>
+
     <script src="habbittracker.js"></script>
-
-    <!-- Модальное окно для мини-игр -->
-<div id="games-modal" class="games-modal">
-    <div class="games-modal-content">
-        <button class="games-close-btn" id="games-close">✕</button>
-        
-        <!-- Меню выбора игры -->
-        <div id="games-menu" class="games-screen active">
-            <h2 class="games-title">Выбери тренировку</h2>
-            <div class="games-list">
-                <button class="game-card" data-game="count">
-                    <span class="game-icon">🔢</span>
-                    <span class="game-name">Посчитай</span>
-                    <span class="game-desc">Быстрый счёт на время</span>
-                </button>
-                <button class="game-card" data-game="memory">
-                    <span class="game-icon">🃏</span>
-                    <span class="game-name">Найди пару</span>
-                    <span class="game-desc">Тренировка зрительной памяти</span>
-                </button>
-                <button class="game-card" data-game="words">
-                    <span class="game-icon">📝</span>
-                    <span class="game-name">Повтори 10 слов</span>
-                    <span class="game-desc">Запомни и введи слова</span>
-                </button>
-            </div>
-        </div>
-
-        <!-- Контейнер для активной игры -->
-        <div id="games-container" class="games-screen">
-            <div id="game-content"></div>
-        </div>
-
-        <!-- Экран результата игры -->
-        <div id="games-result" class="games-screen">
-            <h2 class="games-title" id="result-title">Результат</h2>
-            <p class="games-result-text" id="result-message"></p>
-            <div class="games-xp-badge" id="result-xp">+5 XP</div>
-            <div class="games-result-buttons">
-                <button class="games-btn primary" id="result-retry">Ещё раз</button>
-                <button class="games-btn secondary" id="result-menu">В меню</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Модальное окно выбора привычки -->
-<div id="habit-selector-modal" class="habit-selector-modal">
-    <div class="habit-selector-content">
-        <button class="habit-selector-close" id="habit-selector-close">✕</button>
-        <h3 class="habit-selector-title">Выбери привычку</h3>
-        <p class="habit-selector-subtitle">для твоей цели</p>
-        <div class="habit-selector-list" id="habit-selector-list">
-            <!-- Привычки рендерятся через JS -->
-        </div>
-    </div>
-</div>
-
-<!-- Анимация повышения уровня -->
-<div id="level-up-animation" class="level-up-animation">
-    <img id="level-up-wolf-img" src="pics/Sneaky wolf 1.png" alt="Level Up!" class="level-up-wolf">
-</div>
-
 </body>
-
-<div id="loading-overlay" class="loading-overlay">
-    <div class="loading-text">терпение — ключ к успеху...</div>
-</div>
-
 </html>
