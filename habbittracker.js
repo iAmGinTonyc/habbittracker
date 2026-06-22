@@ -4,52 +4,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // === ЭЛЕМЕНТЫ ===
     const introScreen = document.getElementById('intro-screen');
     const introText = document.getElementById('intro-text');
-    const identityScreen = document.getElementById('identity-screen');
-    const evolutionScreen = document.getElementById('evolution-screen');
-    const evoList = document.getElementById('evo-list');
-    const evoTitle = document.getElementById('evo-title');
-    const backBtn = document.getElementById('back-btn');
-    const evoFinalConfirm = document.getElementById('evo-final-confirm');
     const dashboardScreen = document.getElementById('dashboard-screen');
     const resetBtn = document.getElementById('reset-btn');
     const loadingOverlay = document.getElementById('loading-overlay');
-
-    // === БАЗА ДАННЫХ ПРИВЫЧЕК ===
-    const goalHabits = {
-        energy: ['Стакан воды натощак', '10 приседаний перед завтраком', '3 глубоких вдоха перед едой'],
-        body: ['10 отжиманий сразу после пробуждения', '1 минута планки перед сном', 'Растяжка шеи и плеч (2 мин)'],
-        health: ['Почистить зубы нитью', 'Гимнастика для глаз (20 сек вдаль)', 'Заменить сладкий чай на воду (1 раз)'],
-        sport: ['1 мин суставной разминки', 'Замерить утренний пульс', 'Написать план тренировки на завтра'],
-        discipline: ['Записать 3 главные задачи на завтра', 'Убрать рабочий стол перед сном', 'Вычеркнуть выполненное из списка'],
-        flex: ['Наклоны к ногам (достать до пола)', 'Вращения плечами и шеей (1 мин)', 'Растяжка грудных мышц в дверном проеме'],
-        recovery: ['Убрать телефон за 30 мин до сна', 'Записать 3 вещи, за которые благодарен', 'Почитать бумажную книгу 5 минут'],
-        expert: ['Выписать 1 ключевой термин', 'Послушать 2 мин тематического подкаста', 'Пересказать вслух 1 изученный факт'],
-        lang: ['Выучить 3 новых слова (карточки)', 'Прочитать 1 короткий пост на языке', 'Написать 1 предложение в дневнике'],
-        focus: ['Написать 1 главную задачу на стикере', 'Запустить таймер на 15 мин работы', 'Сделать 3 глубоких вдоха перед стартом'],
-        creative: ['Придумать 3 альтернативных решения', 'Написать 5 слов-ассоциаций', 'Задать себе вопрос «А что если…?»'],
-        career: ['Посмотреть 1 вакансию мечты (анализ)', 'Записать 1 профессиональное достижение', 'Открыть профиль эксперта и изучить 1 пост'],
-        memory: ['Прочитать абзац, ведя пальцем по строке', 'Запомнить 5 цифр/слов и повторить', 'Визуализировать прочитанное (закрыть глаза)'],
-        system: ['Почистить фотогалерею (удалить 10 фото)', 'Написать 2 главные задачи на завтра', 'Прибрать рабочий стол в конце дня'],
-        silence: ['Посидеть 1 минуту в полной тишине', 'Выписать все мысли на лист (2 мин)', 'Отключить звук на телефоне на 15 минут'],
-        aware: ['Сделать первый глоток кофе/чая осознанно', 'Задать себе вопрос: «Где я сейчас?»', 'Посмотреть на свое отражение и улыбнуться'],
-        detox: ['Удалить 1 приложение, которое не нужно', 'Не брать телефон в туалет', 'Заменить 5 мин скроллинга на взгляд в окно'],
-        emotion: ['Записать 1 эмоцию, которую чувствуешь', 'Сжать и разжать кулаки 5 раз', 'Улыбнуться незнакомцу или коллеге'],
-        spirit: ['Спросить себя: «Кто я без своей работы?»', 'Поблагодарить тело за работу', 'Вспомнить свою главную ценность на сегодня'],
-        minim: ['Протереть 1 полку или поверхность', 'Надеть простую одежду (без логотипов)', 'Сказать «Нет» одной лишней просьбе'],
-        nature: ['Посмотреть на небо 30 секунд', 'Потрогать дерево или растение', 'Послушать пение птиц или шум ветра']
-    };
-
-    const goalNames = {
-        energy: 'Вечная энергия', body: 'Тело мечты', health: 'Железное здоровье', sport: 'Спортивный результат', discipline: 'Дисциплина и режим', flex: 'Гибкость и подвижность', recovery: 'Глубокое восстановление',
-        expert: 'Глубокая экспертиза', lang: 'Владение языком', focus: 'Стальной фокус', creative: 'Креативное мышление', career: 'Карьерный рост', memory: 'Скорочтение и память', system: 'Система знаний',
-        silence: 'Внутренняя тишина', aware: 'Осознанность 24/7', detox: 'Цифровой детокс', emotion: 'Эмоциональный контроль', spirit: 'Духовный рост', minim: 'Простота и минимализм', nature: 'Гармония с природой'
-    };
-
-    const goalIdentityMap = {
-        energy: 'athlete', body: 'athlete', health: 'athlete', sport: 'athlete', discipline: 'athlete', flex: 'athlete', recovery: 'athlete',
-        expert: 'student', lang: 'student', focus: 'student', creative: 'student', career: 'student', memory: 'student', system: 'student',
-        silence: 'monk', aware: 'monk', detox: 'monk', emotion: 'monk', spirit: 'monk', minim: 'monk', nature: 'monk'
-    };
 
     const phrases = [
         "Повторение — это не рутина. Это ритм, в котором рождается мастерство.",
@@ -58,9 +15,6 @@ document.addEventListener('DOMContentLoaded', () => {
     ];
 
     // === ПЕРЕМЕННЫЕ СОСТОЯНИЯ ===
-    let selectedIdentity = null;
-    let selectedGoals = { athlete: [], student: [], monk: [] };
-    let sliderStates = {};
     let phraseInterval = null;
     let currentPhraseIndex = 0;
     let isTransitioning = false;
@@ -77,14 +31,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // === ГЛОБАЛЬНОЕ СОСТОЯНИЕ ===
     let dashState = {
-        identity: null,
-        identityName: null,
         level: 1,
         currentXP: 0,
         habits: [],
+        unlockedGames: ['memory'],
         lastActiveDate: null,
         checkins: { morning: {}, evening: {} },
-        checkinHistory: {}
+        checkinHistory: {},
+        history: {},        // постоянный лог выполнения привычек: { 'YYYY-MM-DD': { uid: true } }
+        psychoMode: false,  // тумблер «psycho mode» (числовые метрики вместо привычек)
+        metricTargets: {},  // переопределённые цели метрик { metricId: число }
+        metricLog: {}       // числовые метрики по дням: { 'YYYY-MM-DD': { metricId: число|bool } }
     };
 
     function saveProgress() {
@@ -105,20 +62,53 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // =========================================
+    //   ИСТОРИЯ ВЫПОЛНЕНИЯ (ПОСТОЯННЫЙ ЛОГ)
+    //   dashState.history = { 'YYYY-MM-DD': { uid: true } }
+    // =========================================
+    const pad2 = n => String(n).padStart(2, '0');
+    const fdt = (y, m, d) => `${y}-${pad2(m + 1)}-${pad2(d)}`; // m: 0-based
+    const todayKey = () => { const t = new Date(); return fdt(t.getFullYear(), t.getMonth(), t.getDate()); };
+    const newUid = () => 'u' + Math.random().toString(36).slice(2, 9) + Date.now().toString(36).slice(-3);
+
+    // id привычки = id цели и он НЕ уникален (у цели несколько микро-привычек),
+    // поэтому для лога заводим стабильный uid.
+    function ensureHabitUids() {
+        let changed = false;
+        (dashState.habits || []).forEach(h => { if (!h.uid) { h.uid = newUid(); changed = true; } });
+        if (changed) saveProgress();
+    }
+
+    function setHistory(uid, dateStr, done) {
+        if (!dashState.history) dashState.history = {};
+        if (done) {
+            (dashState.history[dateStr] = dashState.history[dateStr] || {})[uid] = true;
+        } else if (dashState.history[dateStr]) {
+            delete dashState.history[dateStr][uid];
+            if (!Object.keys(dashState.history[dateStr]).length) delete dashState.history[dateStr];
+        }
+    }
+
+    const isDone = (uid, dateStr) => !!(dashState.history && dashState.history[dateStr] && dashState.history[dateStr][uid]);
+
+    // Текущая серия: подряд идущие выполненные дни до сегодня.
+    // Если сегодня ещё не отмечено — серия не рвётся, отсчёт со вчера.
+    function currentStreak(uid) {
+        let streak = 0;
+        const d = new Date();
+        if (!isDone(uid, todayKey())) d.setDate(d.getDate() - 1);
+        while (isDone(uid, fdt(d.getFullYear(), d.getMonth(), d.getDate()))) {
+            streak++;
+            d.setDate(d.getDate() - 1);
+        }
+        return streak;
+    }
+
     function getLevelStats(level) {
         return {
             xpNeeded: Math.floor(15 * Math.pow(level, 1.8)),
             xpPerHabit: 5 + (level - 1) * 3
         };
-    }
-
-    function getMaxHabitsForLevel(level) {
-        if (level >= 11) return 8;
-        if (level >= 9) return 7;
-        if (level >= 7) return 6;
-        if (level >= 5) return 5;
-        if (level >= 3) return 4;
-        return 3;
     }
 
     function checkNewDay() {
@@ -132,26 +122,79 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // === ПРИВЫЧКИ ПО УМОЛЧАНИЮ ===
+    const DEFAULT_HABITS = [
+        'Подъём до 6 утра', 'Тренировка', 'Книга / аудиокнига', 'План на день',
+        'Работа над пет-проджектом', 'Без алкоголя', 'Цифровой детокс',
+        'Холодный душ', 'Медитация', 'Растяжка'
+    ];
+    const MAX_HABITS = 10;
+
+    // === КОЛЕСО ЖИЗНИ: СФЕРЫ ===
+    const LIFE_AREAS = [
+        { id: 'career',  name: 'Карьера',                 short: 'Карьера' },
+        { id: 'home',    name: 'Дом',                     short: 'Дом' },
+        { id: 'energy',  name: 'Энергия',                 short: 'Энергия' },
+        { id: 'finance', name: 'Финансы',                 short: 'Финансы' },
+        { id: 'social',  name: 'Социальная жизнь',        short: 'Социум' },
+        { id: 'growth',  name: 'Саморазвитие',            short: 'Развитие' },
+        { id: 'emotion', name: 'Эмоциональное состояние', short: 'Эмоции' }
+    ];
+
+    // === PSYCHO MODE: ФИКСИРОВАННЫЙ НАБОР МЕТРИК ===
+    // type: 'goal' (больше = лучше) | 'limit' (меньше = лучше) | 'binary'
+    const METRICS = [
+        { id: 'run',      name: 'км пробежал',          unit: 'км',    type: 'goal',  target: 10,   step: 0.1 },
+        { id: 'calories', name: 'калорий употребил',    unit: 'ккал',  type: 'limit', target: 2000 },
+        { id: 'sleep',    name: 'часов поспал',         unit: 'ч',     type: 'goal',  target: 8,    step: 0.5 },
+        { id: 'claude',   name: 'истратил лимит Claude',unit: '',      type: 'binary' },
+        { id: 'money',    name: 'денег заработал',      unit: '₽',     type: 'goal',  target: 3000 },
+        { id: 'meditate', name: 'минут медитировал',    unit: 'мин',   type: 'goal',  target: 15 },
+        { id: 'pages',    name: 'страниц прочитал',     unit: 'стр',   type: 'goal',  target: 30 },
+        { id: 'cigs',     name: 'сигарет скурил',       unit: 'шт',    type: 'limit', target: 0 },
+        { id: 'coffee',   name: 'кофе выпил',           unit: 'чашек', type: 'limit', target: 2 }
+    ];
+    const metricTarget = m => {
+        const t = dashState.metricTargets && dashState.metricTargets[m.id];
+        return (t === undefined || t === null) ? m.target : t;
+    };
+
+    function createDefaultState() {
+        return {
+            level: 1,
+            currentXP: 0,
+            habits: DEFAULT_HABITS.map(text => ({ text, completed: false, uid: newUid(), areas: [] })),
+            unlockedGames: ['memory'], // старт только «Найди пару»
+            lastActiveDate: todayKey(),
+            checkins: { morning: {}, evening: {} },
+            checkinHistory: {},
+            history: {},
+            psychoMode: false,
+            metricTargets: {},
+            metricLog: {}
+        };
+    }
+
     // === ИНИЦИАЛИЗАЦИЯ ===
     function init() {
         const saved = loadProgress();
-        if (saved && saved.identity) {
+        if (saved && saved.habits && saved.habits.length) {
             dashState = { ...dashState, ...saved };
             if (!dashState.checkins) dashState.checkins = { morning: {}, evening: {} };
             if (!dashState.checkinHistory) dashState.checkinHistory = {};
+            if (!dashState.history) dashState.history = {};
+            if (!dashState.unlockedGames) dashState.unlockedGames = ['memory'];
+            if (!dashState.metricLog) dashState.metricLog = {};
+            if (!dashState.metricTargets) dashState.metricTargets = {};
+            if (typeof dashState.psychoMode !== 'boolean') dashState.psychoMode = false;
+            ensureHabitUids(); // миграция: гарантируем uid у старых привычек
+            dashState.habits.forEach(h => { if (!Array.isArray(h.areas)) h.areas = []; });
             window.dashState = dashState;
-            
-            // ✅ ВОССТАНАВЛИВАЕМ selectedIdentity
-            selectedIdentity = dashState.identity;
-            window.selectedIdentity = dashState.identity;
-            
-            selectedGoals[dashState.identity] = [...new Set(dashState.habits.map(h => h.id))];
-            
             checkNewDay();
-            showDashboard();
+            showDashboard(); // вернувшийся пользователь — сразу на «День»
         } else {
             introScreen.style.opacity = '1';
-            phraseInterval = setInterval(changePhrase, 5000);
+            phraseInterval = setInterval(changePhrase, 5000); // новый — интро с фразами
         }
     }
 
@@ -176,219 +219,30 @@ document.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => {
                 introScreen.style.display = 'none';
                 loadingOverlay.classList.remove('active');
-                identityScreen.classList.add('visible');
+                dashState = createDefaultState(); // первый запуск — дефолтные привычки
+                window.dashState = dashState;
+                saveProgress();
+                showDashboard(); // тап → «День»
             }, 500);
         }, 1500);
     });
 
-    document.querySelectorAll('.identity-header').forEach(header => {
-        header.addEventListener('click', (e) => {
-            e.stopPropagation();
-            const parent = header.closest('.identity-item');
-            const id = parent.dataset.id;
-            const isActive = parent.classList.contains('active');
-            document.querySelectorAll('.identity-item').forEach(i => i.classList.remove('active'));
-            if (!isActive) {
-                parent.classList.add('active');
-                selectedIdentity = id;
-            } else {
-                selectedIdentity = null;
-            }
-        });
-    });
-
-    document.querySelectorAll('.habit').forEach(habit => {
-        habit.addEventListener('click', (e) => {
-            e.stopPropagation();
-            const parent = habit.closest('.identity-item');
-            const id = parent.dataset.id;
-            const goalId = habit.dataset.habit;
-            if (habit.classList.contains('selected')) {
-                habit.classList.remove('selected');
-                selectedGoals[id] = selectedGoals[id].filter(g => g !== goalId);
-            } else {
-                if (selectedGoals[id].length < 3) {
-                    habit.classList.add('selected');
-                    selectedGoals[id].push(goalId);
-                }
-            }
-            updateHabitStates(parent);
-            updateConfirmButton(parent);
-        });
-    });
-
-    function updateHabitStates(parent) {
-        const id = parent.dataset.id;
-        parent.querySelectorAll('.habit').forEach(h =>
-            h.classList.toggle('disabled', !h.classList.contains('selected') && selectedGoals[id].length >= 3)
-        );
-    }
-
-    function updateConfirmButton(parent) {
-        const id = parent.dataset.id;
-        const count = selectedGoals[id].length;
-        const wrapper = parent.querySelector('.confirm-wrapper');
-        wrapper.innerHTML = `<span class="confirm-count">выбрано ${count}/3 целей.</span><br><span class="confirm-text ${count > 0 ? '' : 'disabled'}" id="confirm-${id}">подтверждаешь выбор?</span>`;
-        const btn = wrapper.querySelector('.confirm-text');
-        if (count > 0) btn.addEventListener('click', (e) => { e.stopPropagation(); startTransition(id); });
-    }
-    document.querySelectorAll('.identity-item').forEach(item => updateConfirmButton(item));
-
-    function startTransition(identityId) {
-        selectedIdentity = identityId; // ✅ ИСПРАВЛЕНИЕ: сохраняем в глобальную переменную
-        window.selectedIdentity = identityId;
-        
-        // Ищем заголовок по data-id (надёжнее, чем искать .active во время анимации)
-        const activeNameEl = document.querySelector(`.identity-item[data-id="${identityId}"] .identity-name`);
-        if (!activeNameEl) return;
-
-        renderEvolutionScreen(identityId);
-        evolutionScreen.classList.add('visible');
-        evoTitle.textContent = activeNameEl.textContent; 
-        evoTitle.style.opacity = '0'; evoTitle.offsetHeight; 
-        
-        const endRect = evoTitle.getBoundingClientRect();
-        const targetComp = window.getComputedStyle(evoTitle);
-        const clone = document.createElement('span');
-        clone.className = 'clone-title'; clone.textContent = activeNameEl.textContent;
-        Object.assign(clone.style, {
-            position: 'fixed', left: `${endRect.left}px`, top: `${endRect.top}px`, width: `${endRect.width}px`,
-            fontSize: targetComp.fontSize, fontWeight: targetComp.fontWeight, fontFamily: targetComp.fontFamily,
-            color: '#111111', lineHeight: targetComp.lineHeight, letterSpacing: targetComp.letterSpacing,
-            zIndex: '1000', pointerEvents: 'none', margin: '0', whiteSpace: 'nowrap', overflow: 'hidden',
-            transition: 'transform 1.1s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease', transformOrigin: 'top left'
-        });
-        document.body.appendChild(clone);
-        const startRect = activeNameEl.getBoundingClientRect();
-        const deltaX = startRect.left - endRect.left; const deltaY = startRect.top - endRect.top;
-        const scaleX = startRect.width / endRect.width; const scaleY = startRect.height / endRect.height;
-        clone.style.transform = `translate(${deltaX}px, ${deltaY}px) scale(${scaleX}, ${scaleY})`;
-        identityScreen.classList.add('dissolving'); identityScreen.style.pointerEvents = 'none';
-        requestAnimationFrame(() => {
-            requestAnimationFrame(() => { clone.style.transform = 'translate(0, 0) scale(1, 1)'; });
-        });
-        clone.addEventListener('transitionend', () => {
-            evoTitle.style.opacity = '1'; clone.remove(); identityScreen.style.display = 'none';
-            identityScreen.classList.remove('dissolving'); identityScreen.style.pointerEvents = 'auto';
-        }, { once: true });
-    }
-
-    function renderEvolutionScreen(identityId) {
-        evoList.innerHTML = ''; sliderStates = {};
-        const selectedGoalIds = selectedGoals[identityId] || [];
-        selectedGoalIds.forEach((goalId) => {
-            const habits = goalHabits[goalId] || ['Привычка 1', 'Привычка 2', 'Привычка 3'];
-            const goalTitle = goalNames[goalId] || 'Цель';
-            const row = document.createElement('div'); row.className = 'evo-row';
-            row.innerHTML = `<span class="evo-initial">${goalTitle}</span><span class="evo-arrow">→</span><div class="evo-slider-wrapper" data-goal="${goalId}"><div class="evo-nav prev">‹</div><div class="evo-slider-viewport"><div class="evo-track">${habits.map(h => `<div class="evo-option">${h}</div>`).join('')}</div></div><div class="evo-nav next">›</div></div>`;
-            evoList.appendChild(row);
-        });
-        initSliders();
-    }
-
-    function initSliders() {
-        document.querySelectorAll('.evo-slider-wrapper').forEach(wrapper => {
-            const track = wrapper.querySelector('.evo-track');
-            const options = wrapper.querySelectorAll('.evo-option');
-            let current = 0, startX = 0, isDragging = false;
-            const update = () => { track.style.transform = `translateX(-${current * 100}%)`; };
-            wrapper.querySelector('.prev').addEventListener('click', e => { e.stopPropagation(); if (current > 0) { current--; update(); } });
-            wrapper.querySelector('.next').addEventListener('click', e => { e.stopPropagation(); if (current < options.length - 1) { current++; update(); } });
-            wrapper.addEventListener('mousedown', e => { startX = e.pageX; isDragging = true; });
-            wrapper.addEventListener('mouseup', e => {
-                if (!isDragging) return;
-                const diff = startX - e.pageX;
-                if (diff > 30 && current < options.length - 1) { current++; update(); }
-                else if (diff < -30 && current > 0) { current--; update(); }
-                isDragging = false;
-            });
-            wrapper.addEventListener('mouseleave', () => isDragging = false);
-        });
-    }
-
-    evoFinalConfirm.addEventListener('click', () => {
-        console.log('🔘 Кнопка "зафиксировать путь" нажата');
-        console.log('selectedIdentity:', selectedIdentity);
-
-        // ✅ Берём идентичность из переменной (она точно есть)
-        const identityId = selectedIdentity;
-        if (!identityId) { 
-            console.error('❌ ОШИБКА: Идентичность не выбрана'); 
-            alert('Пожалуйста, выбери роль и цели заново.');
-            return; 
-        }
-
-        // Для названия используем маппинг (так как DOM-элемент уже скрыт)
-        const identityNames = { athlete: 'Атлет', student: 'Студент', monk: 'Монах' };
-        const identityName = identityNames[identityId] || 'Пользователь';
-
-        const selectedGoalIds = selectedGoals[identityId];
-        if (!selectedGoalIds || selectedGoalIds.length === 0) {
-            console.error('❌ ОШИБКА: Список целей пуст');
-            return;
-        }
-
-        const finalHabits = selectedGoalIds.map(goalId => {
-            const wrapper = document.querySelector(`.evo-slider-wrapper[data-goal="${goalId}"]`);
-            if (!wrapper) return null;
-            const track = wrapper.querySelector('.evo-track');
-            const options = wrapper.querySelectorAll('.evo-option');
-            const match = track.style.transform ? track.style.transform.match(/-(\d+)%/) : null;
-            const index = match ? parseInt(match[1]) / 100 : 0;
-            const text = options[index] ? options[index].textContent : (options[0] ? options[0].textContent : 'Ошибка');
-            return { id: goalId, text, completed: false };
-        }).filter(h => h !== null);
-
-        evolutionScreen.classList.remove('visible');
-        loadingOverlay.classList.add('active');
-
-        setTimeout(() => {
-            dashState = {
-                identity: identityId,
-                identityName: identityName,
-                level: 1, currentXP: 0, habits: finalHabits,
-                lastActiveDate: new Date().toISOString().split('T')[0],
-                checkins: { morning: {}, evening: {} },
-                checkinHistory: {}
-            };
-            saveProgress();
-            loadingOverlay.classList.remove('active');
-            showDashboard();
-        }, 1500);
-    });
-
-    backBtn.addEventListener('click', () => {
-        evolutionScreen.classList.remove('visible');
-        setTimeout(() => {
-            identityScreen.style.display = 'flex';
-            requestAnimationFrame(() => { identityScreen.classList.add('visible'); identityScreen.style.pointerEvents = 'auto'; });
-        }, 300);
-    });
-
-    document.addEventListener('click', e => {
-        if (!e.target.closest('.identity-header') && !e.target.closest('.habit') && !e.target.closest('.confirm-wrapper')) {
-            document.querySelectorAll('.identity-item').forEach(i => i.classList.remove('active'));
-            selectedIdentity = null;
-        }
-    });
+    // Экран выбора идентичности и эволюции удалён — приложение сразу ведёт на «День».
 
     // === ПЕРЕКЛЮЧЕНИЕ ВИДОВ ===
     function switchView(viewName) {
         console.log('🔄 switchView:', viewName);
         document.querySelectorAll('.dash-view').forEach(view => view.classList.remove('active'));
         const target = document.getElementById(`view-${viewName}`);
-        if (target) {
-            setTimeout(() => {
-                target.classList.add('active');
-                if (viewName === 'habits') { startDayTimer(); } else { if (timerInterval) clearInterval(timerInterval); }
-            }, 50);
-        }
+        if (target) target.classList.add('active'); // синхронно — иначе быстрые переключения оставляют 2 активных вида
+        if (viewName === 'habits') { startDayTimer(); } else if (timerInterval) { clearInterval(timerInterval); }
         document.querySelectorAll('.view-btn').forEach(btn => {
             btn.classList.remove('active');
             if (btn.dataset.view === viewName) btn.classList.add('active');
         });
-        if (viewName === 'habits') renderDashboardHabits();
+        if (viewName === 'habits') renderDayView();
         else if (viewName === 'training') initTrainingMenu();
+        else if (viewName === 'month') { monthCursor = null; renderMonthView(); }
         else if (viewName === 'morning' || viewName === 'evening') initCheckins(viewName);
         updateCheckinButtonPulse();
     }
@@ -424,72 +278,146 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // === ИКОНКИ (моно, ч/б) ===
+    const FLAME = '<svg class="flame" viewBox="0 0 384 512" width="9" height="11" fill="currentColor" aria-hidden="true"><path d="M216 24c0-15-19-22-29-11C147 60 96 137 96 248c-22-13-36-33-44-57-4-11-19-14-26-4C10 211 0 247 0 288c0 106 86 192 192 192s192-86 192-192c0-104-63-180-120-238-11-11-30-4-30 11v40c0 31-25 56-56 56-23 0-40-15-40-37 0-30 38-50 78-96z"/></svg>';
+    const DOTS = '<svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor" aria-hidden="true"><circle cx="3" cy="8" r="1.4"/><circle cx="8" cy="8" r="1.4"/><circle cx="13" cy="8" r="1.4"/></svg>';
+    const LOCK = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="1.5"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>';
+    const streakChip = n => n > 0 ? `<span class="dash-habit-streak">${FLAME}${n}</span>` : '';
+
+    // === ИГРЫ: МЕТА И РАЗБЛОКИРОВКА ПО УРОВНЯМ ===
+    const GAMES = {
+        memory: { name: 'Найди пару', desc: 'Тренировка памяти' },
+        count:  { name: 'Посчитай', desc: 'Быстрый счёт на время' },
+        words:  { name: '10 слов', desc: 'Запомни и введи' }
+    };
+    const GAME_ORDER = ['memory', 'count', 'words'];
+    const UNLOCK_LEVELS = [3, 7, 10]; // на этих уровнях даётся выбор новой игры
+    const maxUnlockable = () => Math.min(1 + UNLOCK_LEVELS.filter(l => dashState.level >= l).length, GAME_ORDER.length);
+    const lockedGames = () => GAME_ORDER.filter(g => !dashState.unlockedGames.includes(g));
+    function checkGameUnlock() {
+        if (dashState.unlockedGames.length < maxUnlockable() && lockedGames().length) openGameUnlockModal();
+    }
+    function openGameUnlockModal() {
+        const modal = document.getElementById('game-unlock-modal');
+        const list = document.getElementById('game-unlock-list');
+        const lvl = document.getElementById('game-unlock-level');
+        if (!modal || !list) return;
+        if (lvl) lvl.textContent = dashState.level;
+        list.innerHTML = '';
+        lockedGames().forEach(g => {
+            const opt = document.createElement('button');
+            opt.className = 'game-option';
+            opt.innerHTML = `<span class="game-option-name">${GAMES[g].name}</span><span class="game-option-desc">${GAMES[g].desc}</span>`;
+            opt.addEventListener('click', () => {
+                dashState.unlockedGames.push(g);
+                saveProgress();
+                modal.classList.remove('active');
+                checkGameUnlock(); // на случай, если открыто сразу несколько порогов
+            });
+            list.appendChild(opt);
+        });
+        modal.classList.add('active');
+    }
+
     // === ДАШБОРД ===
     function showDashboard() {
-        identityScreen.style.display = 'none'; evolutionScreen.style.display = 'none';
-        document.getElementById('dash-identity-name').textContent = dashState.identityName;
+        introScreen.style.display = 'none';
         dashboardScreen.classList.add('visible');
+        updateDashDate();
+        const pt = document.getElementById('psycho-toggle');
+        if (pt) { pt.classList.toggle('on', !!dashState.psychoMode); pt.setAttribute('aria-pressed', dashState.psychoMode ? 'true' : 'false'); }
+        dashboardScreen.classList.toggle('psycho-invert', !!dashState.psychoMode);
         switchView('habits');
         updateProgressUI();
         startReminderChecker();
         updateCheckinButtonPulse();
-        initHistoryLogic(); // Инициализируем историю и аналитику
+        initHistoryLogic();
+    }
+
+    function updateDashDate() {
+        const el = document.getElementById('dash-date');
+        if (!el) return;
+        const months = ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
+        const wd = ['воскресенье','понедельник','вторник','среда','четверг','пятница','суббота'];
+        const d = new Date();
+        el.textContent = `${d.getDate()} ${months[d.getMonth()]}, ${wd[d.getDay()]}`;
     }
 
     function renderDashboardHabits() {
         const list = document.getElementById('dash-habit-list');
         if (!list) return;
         list.innerHTML = '';
-        const stats = getLevelStats(dashState.level);
-        const maxHabits = getMaxHabitsForLevel(dashState.level);
-        const currentHabits = dashState.habits.length;
 
         dashState.habits.forEach((habit, index) => {
             const row = document.createElement('div');
             row.className = `dash-habit-row ${habit.completed ? 'completed' : ''}`;
             let subtextHtml = '';
             if (habit.triggerText) subtextHtml += `<span>после того как ${habit.triggerText}</span>`;
-            if (habit.reminderTime) subtextHtml += `<span>⏰ Напомнить в ${habit.reminderTime}</span>`;
-            row.innerHTML = `<div class="habit-main-line"><span class="dash-habit-text">${habit.text}</span><span class="dash-habit-xp">+${stats.xpPerHabit} XP</span><span class="habit-settings-icon">⚙️</span></div>${subtextHtml ? `<div class="habit-subtext">${subtextHtml}</div>` : ''}`;
+            if (habit.reminderTime) subtextHtml += `<span>напомнить в ${habit.reminderTime}</span>`;
+            row.innerHTML = `<div class="habit-main-line"><span class="habit-check"></span><span class="dash-habit-text">${habit.text}</span>${streakChip(currentStreak(habit.uid))}<span class="habit-settings-icon">${DOTS}</span></div>${subtextHtml ? `<div class="habit-subtext">${subtextHtml}</div>` : ''}`;
+            row.querySelector('.habit-check').addEventListener('click', () => toggleHabit(index, row));
             row.querySelector('.dash-habit-text').addEventListener('click', () => toggleHabit(index, row));
             row.querySelector('.habit-settings-icon').addEventListener('click', (e) => { e.stopPropagation(); openHabitSettings(index); });
             list.appendChild(row);
         });
 
-        const emptyUnlockedSlots = maxHabits - currentHabits;
-        for (let i = 0; i < emptyUnlockedSlots; i++) {
-            const row = document.createElement('div');
-            row.className = 'dash-habit-row dash-habit-empty unlocked';
-            row.innerHTML = `<span class="dash-habit-text">Добавить привычку</span><span class="lock-icon-right">🔓</span>`;
-            row.addEventListener('click', () => openHabitSelector());
-            list.appendChild(row);
+        // добавление новой привычки (до лимита MAX_HABITS)
+        if (dashState.habits.length < MAX_HABITS) {
+            const add = document.createElement('div');
+            add.className = 'dash-habit-add';
+            add.innerHTML = `<input type="text" id="new-habit-input" maxlength="40" placeholder="+ добавить привычку">`;
+            list.appendChild(add);
+            const inp = add.querySelector('#new-habit-input');
+            inp.addEventListener('keydown', e => {
+                if (e.key !== 'Enter') return;
+                const v = inp.value.trim();
+                if (!v) return;
+                dashState.habits.push({ text: v, completed: false, uid: newUid(), areas: [] });
+                saveProgress();
+                renderDashboardHabits();
+                const ni = document.getElementById('new-habit-input');
+                if (ni) ni.focus();
+            });
+        } else {
+            const note = document.createElement('div');
+            note.className = 'dash-habit-limit';
+            note.textContent = `Максимум ${MAX_HABITS} привычек`;
+            list.appendChild(note);
         }
-        const lockedSlots = 8 - maxHabits;
-        for (let i = 0; i < lockedSlots; i++) {
-            const slotNumber = maxHabits + i + 1;
-            const unlockLevel = slotNumber === 4 ? 3 : slotNumber === 5 ? 5 : slotNumber === 6 ? 7 : slotNumber === 7 ? 9 : 11;
-            const row = document.createElement('div');
-            row.className = 'dash-habit-row dash-habit-empty locked';
-            row.innerHTML = `<span class="dash-habit-text">Уровень ${unlockLevel}</span><span class="lock-icon-right">🔒</span>`;
-            list.appendChild(row);
-        }
+        renderLifeWheel('day', 'life-wheel-day'); // колесо отражает выполнение
+    }
+
+    function updateRowStreak(rowElement, uid) {
+        const existing = rowElement.querySelector('.dash-habit-streak');
+        if (existing) existing.remove();
+        const s = currentStreak(uid);
+        if (s > 0) rowElement.querySelector('.dash-habit-text').insertAdjacentHTML('afterend', streakChip(s));
+    }
+
+    function pulseLevel() {
+        const el = document.getElementById('dash-level-value');
+        if (!el) return;
+        el.style.transform = 'scale(1.4)';
+        setTimeout(() => { el.style.transform = 'scale(1)'; }, 300);
     }
 
     function toggleHabit(index, rowElement) {
-        if (dashState.habits[index].completed) return;
-        const stats = getLevelStats(dashState.level);
-        dashState.habits[index].completed = true;
-        dashState.currentXP += stats.xpPerHabit;
-        rowElement.classList.add('completed');
-        if (dashState.currentXP >= stats.xpNeeded) {
-            dashState.level++; dashState.currentXP = 0;
-            const levelEl = document.getElementById('dash-level-value');
-            levelEl.style.transform = "scale(1.5)"; levelEl.style.color = "#111";
-            setTimeout(() => { levelEl.style.transform = "scale(1)"; }, 300);
-            showLevelUpAnimation();
-            renderDashboardHabits();
+        const habit = dashState.habits[index];
+        const nowDone = !habit.completed;
+        habit.completed = nowDone;
+        rowElement.classList.toggle('completed', nowDone);
+        setHistory(habit.uid, todayKey(), nowDone); // постоянный лог за сегодня
+        updateRowStreak(rowElement, habit.uid);
+        renderLifeWheel('day', 'life-wheel-day'); // колесо обновляется при отметке
+
+        // XP — только при выполнении и не больше одного раза за день (без фарма)
+        if (nowDone && habit.xpDate !== todayKey()) {
+            habit.xpDate = todayKey();
+            awardXP(getLevelStats(dashState.level).xpPerHabit); // обновит UI, сохранит, проверит разблокировку
+        } else {
+            updateProgressUI();
+            saveProgress();
         }
-        updateProgressUI(); saveProgress();
     }
 
     function updateProgressUI() {
@@ -508,42 +436,351 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // === ВЫБОР ПРИВЫЧКИ ===
-    function openHabitSelector() {
-        const modal = document.getElementById('habit-selector-modal');
-        const list = document.getElementById('habit-selector-list');
-        const subtitle = document.querySelector('.habit-selector-subtitle');
-        if (!modal || !list) return;
-        const identityId = dashState.identity;
-        const availableHabits = [];
-        for (const [goalId, habits] of Object.entries(goalHabits)) {
-            if (goalIdentityMap[goalId] === identityId) {
-                habits.forEach(habitText => {
-                    if (!dashState.habits.some(h => h.text === habitText)) availableHabits.push({ goalId, text: habitText });
-                });
-            }
+    // =========================================
+    //   ВИД «МЕСЯЦ» — ИСТОРИЯ / ТЕПЛОВАЯ КАРТА
+    // =========================================
+    let monthCursor = null; // { y, m } — отображаемый месяц
+    const MONTH_NAMES = ['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
+    const WD_SHORT = ['Вс','Пн','Вт','Ср','Чт','Пт','Сб'];
+    const daysInMonth = (y, m) => new Date(y, m + 1, 0).getDate();
+
+    function renderMonthView() {
+        const root = document.getElementById('view-month');
+        if (!root) return;
+        if (!monthCursor) { const t = new Date(); monthCursor = { y: t.getFullYear(), m: t.getMonth() }; }
+        const { y, m } = monthCursor;
+        if (dashState.psychoMode) { renderPsychoMonth(y, m); return; } // в psycho mode — сводка метрик
+        const days = daysInMonth(y, m);
+        const dayList = Array.from({ length: days }, (_, i) => i + 1);
+        const habits = dashState.habits || [];
+        const tKey = todayKey();
+
+        // сводка месяца
+        const monthStats = () => {
+            let possible = 0, done = 0;
+            dayList.forEach(d => { const k = fdt(y, m, d); habits.forEach(h => { possible++; if (isDone(h.uid, k)) done++; }); });
+            return { possible, done, pct: possible ? Math.round(done / possible * 100) : 0 };
+        };
+        const st = monthStats();
+
+        root.innerHTML = `
+            <div class="month-head">
+                <button class="month-nav" id="month-prev">←</button>
+                <span class="month-label">${MONTH_NAMES[m]} ${y}</span>
+                <button class="month-nav" id="month-next">→</button>
+            </div>
+            <div class="month-summary">
+                <div class="month-stat"><span>${st.done}</span>выполнено</div>
+                <div class="month-stat"><span>${st.possible}</span>возможно</div>
+                <div class="month-stat"><span>${st.pct}%</span>прогресс</div>
+            </div>
+            <div class="month-progress"><div class="month-progress-fill" style="width:${st.pct}%"></div></div>
+            <div class="month-hint">клик по клетке — отметить день · сегодня выделено рамкой</div>
+            ${habits.length ? `<div class="heatmap" id="heatmap"></div>` : `<p class="month-empty">Пока нет привычек — добавь их во вкладке «Привычки».</p>`}
+            <div class="month-wheel-block">
+                <div class="month-chart-title">Колесо жизни за месяц</div>
+                <div id="life-wheel-month"></div>
+            </div>
+            <div class="month-chart-block">
+                <div class="month-chart-title">Настроение и качество сна</div>
+                <canvas id="month-ms-chart" width="600" height="150"></canvas>
+                <div class="month-legend"><span class="lg lg-mood">● Настроение</span><span class="lg lg-sleep">● Качество сна</span></div>
+            </div>
+        `;
+        renderLifeWheel('month', 'life-wheel-month', y, m);
+
+        const hm = document.getElementById('heatmap');
+        if (hm) {
+            habits.forEach(h => {
+                const streak = currentStreak(h.uid);
+                const monthDone = dayList.filter(d => isDone(h.uid, fdt(y, m, d))).length;
+                const cells = dayList.map(d => {
+                    const k = fdt(y, m, d);
+                    const done = isDone(h.uid, k);
+                    const future = k > tKey;
+                    const wd = WD_SHORT[new Date(y, m, d).getDay()];
+                    return `<div class="hm-cell${done ? ' done' : ''}${k === tKey ? ' today' : ''}${future ? ' future' : ''}" data-uid="${h.uid}" data-key="${k}" title="${d} ${MONTH_NAMES[m]} — ${done ? 'выполнено' : 'нет'}"><span class="hm-wd">${wd}</span></div>`;
+                }).join('');
+                const rowEl = document.createElement('div');
+                rowEl.className = 'hm-row';
+                rowEl.innerHTML = `
+                    <div class="hm-row-head">
+                        <span class="hm-label" title="${h.text}">${h.text}</span>
+                        <span class="hm-meta">${streak > 0 ? `<span class="hm-streak">${FLAME}${streak}</span>` : ''}<span class="hm-count">${monthDone}/${days}</span></span>
+                    </div>
+                    <div class="hm-cells" style="grid-template-columns:repeat(${days},1fr)">${cells}</div>`;
+                hm.appendChild(rowEl);
+            });
+
+            // редактирование задним числом (делегирование, без полного ре-рендера)
+            hm.onclick = (e) => {
+                const cell = e.target.closest('.hm-cell');
+                if (!cell || cell.classList.contains('future')) return;
+                const uid = cell.dataset.uid, key = cell.dataset.key;
+                const now = !isDone(uid, key);
+                setHistory(uid, key, now);
+                cell.classList.toggle('done', now);
+                // если правим сегодня — синхронизируем с дашбордом (без изменения XP)
+                if (key === tKey) { const h = habits.find(x => x.uid === uid); if (h) h.completed = now; }
+                saveProgress();
+                // точечно обновляем мету строки и сводку месяца
+                const rowEl = cell.closest('.hm-row');
+                const md = dayList.filter(d => isDone(uid, fdt(y, m, d))).length;
+                const s = currentStreak(uid);
+                rowEl.querySelector('.hm-meta').innerHTML = `${s > 0 ? `<span class="hm-streak">${FLAME}${s}</span>` : ''}<span class="hm-count">${md}/${days}</span>`;
+                const s2 = monthStats();
+                const stats = root.querySelectorAll('.month-stat span');
+                stats[0].textContent = s2.done; stats[1].textContent = s2.possible; stats[2].textContent = `${s2.pct}%`;
+                root.querySelector('.month-progress-fill').style.width = `${s2.pct}%`;
+            };
         }
-        subtitle.textContent = `доступно ${availableHabits.length} вариантов`;
-        list.innerHTML = '';
-        if (availableHabits.length === 0) {
-            list.innerHTML = '<div style="text-align:center;color:#999;padding:20px;">Все привычки уже добавлены!</div>';
-        } else {
-            availableHabits.sort((a, b) => a.text.localeCompare(b.text));
-            availableHabits.forEach(habit => {
-                const option = document.createElement('div'); option.className = 'habit-option'; option.textContent = habit.text;
-                option.addEventListener('click', () => { addNewHabit(habit); closeModal(); });
-                list.appendChild(option);
+
+        document.getElementById('month-prev').onclick = () => { if (--monthCursor.m < 0) { monthCursor.m = 11; monthCursor.y--; } renderMonthView(); };
+        document.getElementById('month-next').onclick = () => { if (++monthCursor.m > 11) { monthCursor.m = 0; monthCursor.y++; } renderMonthView(); };
+
+        drawMonthMoodSleep(y, m, days);
+    }
+
+    // Сводка метрик за календарный месяц (psycho mode)
+    function renderPsychoMonth(y, m) {
+        const root = document.getElementById('view-month');
+        const days = daysInMonth(y, m);
+        const sums = {}; METRICS.forEach(mt => sums[mt.id] = 0);
+        for (let d = 1; d <= days; d++) {
+            const rec = dashState.metricLog[fdt(y, m, d)];
+            if (!rec) continue;
+            METRICS.forEach(mt => {
+                if (mt.type === 'binary') { if (rec[mt.id] === true) sums[mt.id]++; }
+                else { const v = +rec[mt.id]; if (!isNaN(v)) sums[mt.id] += v; }
             });
         }
-        modal.classList.add('active');
-        modal.onclick = (e) => { if (e.target === modal) closeModal(); };
-        document.addEventListener('keydown', handleEsc);
+        const rows = METRICS.map(mt => {
+            if (mt.type === 'binary') {
+                return `<div class="pm-row"><div class="pm-top"><span class="pm-name">${mt.name}</span><span class="pm-val"><b>${sums[mt.id]}</b> из ${days} дн.</span></div></div>`;
+            }
+            const monthlyTarget = metricTarget(mt) * days;
+            const isLimit = mt.type === 'limit';
+            const over = isLimit && sums[mt.id] > monthlyTarget;
+            const pct = monthlyTarget > 0 ? Math.min(100, Math.round(sums[mt.id] / monthlyTarget * 100)) : (sums[mt.id] > 0 ? 100 : 0);
+            return `<div class="pm-row">
+                <div class="pm-top"><span class="pm-name">${mt.name}${isLimit ? '<span class="metric-tag">лимит</span>' : ''}</span>
+                <span class="pm-val ${over ? 'over' : ''}"><b>${fmtNum(sums[mt.id])}</b> / ${fmtNum(monthlyTarget)} ${mt.unit}</span></div>
+                <div class="metric-bar ${over ? 'over' : ''}"><i style="width:${pct}%"></i></div></div>`;
+        }).join('');
+        root.innerHTML = `
+            <div class="month-head">
+                <button class="month-nav" id="month-prev">←</button>
+                <span class="month-label">${MONTH_NAMES[m]} ${y}</span>
+                <button class="month-nav" id="month-next">→</button>
+            </div>
+            <div class="month-hint">сумма за месяц · цель = дневная × ${days} дн.</div>
+            <div class="pm-list">${rows}</div>`;
+        document.getElementById('month-prev').onclick = () => { if (--monthCursor.m < 0) { monthCursor.m = 11; monthCursor.y--; } renderMonthView(); };
+        document.getElementById('month-next').onclick = () => { if (++monthCursor.m > 11) { monthCursor.m = 0; monthCursor.y++; } renderMonthView(); };
     }
-    function closeModal() { document.getElementById('habit-selector-modal').classList.remove('active'); document.removeEventListener('keydown', handleEsc); }
-    function handleEsc(e) { if (e.key === 'Escape') closeModal(); }
-    function addNewHabit(habit) {
-        dashState.habits.push({ id: habit.goalId, text: habit.text, completed: false });
-        saveProgress(); renderDashboardHabits(); updateProgressUI();
+
+    // Линия настроения и качества сна за месяц (данные из утренних чек-апов)
+    function drawMonthMoodSleep(y, m, days) {
+        const canvas = document.getElementById('month-ms-chart');
+        if (!canvas) return;
+        const rect = canvas.getBoundingClientRect();
+        if (rect.width === 0) { setTimeout(() => drawMonthMoodSleep(y, m, days), 60); return; } // ещё не виден
+        const dpr = window.devicePixelRatio || 1;
+        canvas.width = rect.width * dpr; canvas.height = rect.height * dpr;
+        const ctx = canvas.getContext('2d'); ctx.scale(dpr, dpr);
+        const w = rect.width, h = rect.height;
+        const pad = { t: 8, r: 10, b: 16, l: 22 };
+        const iw = w - pad.l - pad.r, ih = h - pad.t - pad.b;
+        ctx.clearRect(0, 0, w, h);
+
+        // сетка 0 / 5 / 10
+        ctx.strokeStyle = '#f0f0f0'; ctx.lineWidth = 1; ctx.fillStyle = '#bbb'; ctx.font = '9px sans-serif'; ctx.textAlign = 'right';
+        [0, 5, 10].forEach(v => { const yy = pad.t + ih - (v / 10) * ih; ctx.beginPath(); ctx.moveTo(pad.l, yy); ctx.lineTo(w - pad.r, yy); ctx.stroke(); ctx.fillText(v, pad.l - 4, yy + 3); });
+
+        const hist = dashState.checkinHistory || {};
+        const xAt = d => pad.l + (days > 1 ? (d - 1) / (days - 1) * iw : iw / 2);
+        const yAt = v => pad.t + ih - (v / 10) * ih;
+        const valFor = (d, key) => {
+            const local = hist[fdt(y, m, d)]?.morning?.[key];
+            if (local != null) return local;
+            const iso = new Date(y, m, d).toISOString().split('T')[0]; // на случай UTC-ключей
+            return hist[iso]?.morning?.[key];
+        };
+        const series = (key, color, dash) => {
+            const pts = [];
+            for (let d = 1; d <= days; d++) { const v = valFor(d, key); if (v) pts.push({ d, v }); }
+            if (!pts.length) return;
+            ctx.beginPath(); ctx.setLineDash(dash); ctx.strokeStyle = color; ctx.lineWidth = 2; ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+            pts.forEach((p, i) => { const x = xAt(p.d), yy = yAt(p.v); i ? ctx.lineTo(x, yy) : ctx.moveTo(x, yy); });
+            ctx.stroke(); ctx.setLineDash([]);
+            pts.forEach(p => { ctx.beginPath(); ctx.arc(xAt(p.d), yAt(p.v), 2.5, 0, Math.PI * 2); ctx.fillStyle = color; ctx.fill(); });
+        };
+        series('mood', '#111', []);
+        series('sleepQuality', '#999', [4, 3]);
+    }
+
+    // =========================================
+    //   КОЛЕСО ЖИЗНИ (авто от выполнения привычек)
+    // =========================================
+    // Доля заполнения сферы:
+    //   day   — выполнено сегодня / всего привычек сферы
+    //   month — суммарно выполнено за месяц / (дней × привычек сферы)
+    function areaFractions(scope, y, m) {
+        const acc = {}; LIFE_AREAS.forEach(a => acc[a.id] = { done: 0, total: 0 });
+        const days = (scope === 'month') ? daysInMonth(y, m) : 1;
+        (dashState.habits || []).forEach(h => {
+            (h.areas || []).forEach(aid => {
+                if (!acc[aid]) return;
+                if (scope === 'day') {
+                    acc[aid].total += 1;
+                    if (isDone(h.uid, todayKey())) acc[aid].done += 1;
+                } else {
+                    acc[aid].total += days;
+                    for (let d = 1; d <= days; d++) if (isDone(h.uid, fdt(y, m, d))) acc[aid].done += 1;
+                }
+            });
+        });
+        const out = {};
+        LIFE_AREAS.forEach(a => { const r = acc[a.id]; out[a.id] = { frac: r.total ? r.done / r.total : 0, has: r.total > 0 }; });
+        return out;
+    }
+
+    function lifeWheelSVG(fr) {
+        const cx = 150, cy = 110, R = 73;
+        const N = LIFE_AREAS.length, step = 2 * Math.PI / N, start = -Math.PI / 2;
+        const pt = (a, r) => [cx + r * Math.cos(a), cy + r * Math.sin(a)];
+        const wedge = (a0, a1, r) => { const p0 = pt(a0, r), p1 = pt(a1, r); return `M${cx},${cy} L${p0[0].toFixed(1)},${p0[1].toFixed(1)} A${r},${r} 0 0 1 ${p1[0].toFixed(1)},${p1[1].toFixed(1)} Z`; };
+        let s = '';
+        LIFE_AREAS.forEach((a, i) => {
+            const a0 = start + i * step, a1 = start + (i + 1) * step, f = fr[a.id].frac;
+            s += `<path d="${wedge(a0, a1, R)}" fill="#f0f0f0" stroke="#fff" stroke-width="1.5"/>`;
+            if (f > 0) s += `<path d="${wedge(a0, a1, R * f)}" fill="#111" stroke="#fff" stroke-width="1.5"/>`;
+        });
+        [0.34, 0.67, 1].forEach(g => { s += `<circle cx="${cx}" cy="${cy}" r="${(R * g).toFixed(1)}" fill="none" stroke="#fff" stroke-width="1"/>`; });
+        LIFE_AREAS.forEach((a, i) => {
+            const ang = start + (i + 0.5) * step, l = pt(ang, R + 13);
+            const anchor = Math.abs(Math.cos(ang)) < 0.35 ? 'middle' : (Math.cos(ang) > 0 ? 'start' : 'end');
+            s += `<text x="${l[0].toFixed(1)}" y="${l[1].toFixed(1)}" text-anchor="${anchor}" dominant-baseline="middle" font-size="11" fill="${fr[a.id].has ? '#666' : '#c4c4c4'}">${a.short}</text>`;
+        });
+        return `<svg viewBox="0 0 300 230" width="100%" style="max-width:300px;display:block;margin:0 auto" role="img" aria-label="Колесо жизни">${s}</svg>`;
+    }
+
+    function renderLifeWheel(scope, containerId, y, m) {
+        const el = document.getElementById(containerId);
+        if (!el) return;
+        const anyAreas = (dashState.habits || []).some(h => (h.areas || []).length);
+        if (!anyAreas) {
+            el.innerHTML = `<div class="wheel-empty">Колесо жизни заполнится, когда привяжешь привычки к сферам — в настройках привычки (кнопка «⋯»).</div>`;
+            return;
+        }
+        el.innerHTML = lifeWheelSVG(areaFractions(scope, y, m));
+    }
+
+    // =========================================
+    //   PSYCHO MODE (числовые метрики)
+    // =========================================
+    const metricValue = id => { const day = dashState.metricLog[todayKey()]; return day ? day[id] : undefined; };
+    function setMetricValue(id, val) {
+        const k = todayKey();
+        if (!dashState.metricLog[k]) dashState.metricLog[k] = {};
+        const day = dashState.metricLog[k];
+        if (val === false || val === 0 || val === undefined || val === null) {
+            if (val === false) day[id] = false; else delete day[id];
+        } else day[id] = val;
+        if (!Object.keys(day).length) delete dashState.metricLog[k];
+        saveProgress();
+    }
+    const fmtNum = n => {
+        const r = Math.round(n * 100) / 100;
+        return r.toLocaleString('ru-RU', { maximumFractionDigits: 2 });
+    };
+
+    function setPsychoMode(on) {
+        dashState.psychoMode = on;
+        saveProgress();
+        const t = document.getElementById('psycho-toggle');
+        if (t) { t.classList.toggle('on', on); t.setAttribute('aria-pressed', on ? 'true' : 'false'); }
+        dashboardScreen.classList.toggle('psycho-invert', on); // инверсия цветов в режиме
+        renderDayView();
+        switchView('habits');
+    }
+
+    function renderDayView() {
+        const normal = document.getElementById('day-normal');
+        const psycho = document.getElementById('day-psycho');
+        if (normal && psycho) {
+            normal.style.display = dashState.psychoMode ? 'none' : 'block';
+            psycho.style.display = dashState.psychoMode ? 'block' : 'none';
+        }
+        if (dashState.psychoMode) renderPsychoMetrics();
+        else renderDashboardHabits(); // сам отрисует колесо в конце
+    }
+
+    function renderPsychoMetrics() {
+        const list = document.getElementById('psycho-list');
+        if (!list) return;
+        list.innerHTML = '';
+        METRICS.forEach(m => {
+            const row = document.createElement('div');
+            row.className = 'metric-row';
+
+            if (m.type === 'binary') {
+                const on = metricValue(m.id) === true;
+                row.classList.add('metric-binary');
+                row.innerHTML = `<span class="metric-name">${m.name}</span><span class="metric-switch ${on ? 'on' : ''}" role="button" tabindex="0" aria-label="${m.name}" aria-pressed="${on}"></span>`;
+                row.querySelector('.metric-switch').addEventListener('click', () => { setMetricValue(m.id, !on); renderPsychoMetrics(); });
+                list.appendChild(row);
+                return;
+            }
+
+            const val = +metricValue(m.id) || 0;
+            const target = metricTarget(m);
+            const isLimit = m.type === 'limit';
+            const over = isLimit && val > target;
+            const pct = target > 0 ? Math.min(100, Math.round(val / target * 100)) : (val > 0 ? 100 : 0);
+            row.innerHTML = `
+                <div class="metric-top">
+                    <span class="metric-name">${m.name}${isLimit ? '<span class="metric-tag">лимит</span>' : ''}</span>
+                    <span class="metric-val ${over ? 'over' : ''}"><b>${fmtNum(val)}</b> / ${fmtNum(target)} ${m.unit}</span>
+                </div>
+                <div class="metric-bar ${over ? 'over' : ''}"><i style="width:${pct}%"></i></div>
+                <div class="metric-actions">
+                    <input type="number" class="metric-input" inputmode="decimal" placeholder="+ значение"${m.step ? ` step="${m.step}"` : ''}>
+                    <button class="metric-add" type="button" aria-label="Добавить">＋</button>
+                    <button class="metric-goal" type="button">${isLimit ? 'лимит' : 'цель'} ${fmtNum(target)}${m.unit ? ' ' + m.unit : ''}</button>
+                    ${val ? '<button class="metric-reset" type="button">сброс</button>' : ''}
+                </div>`;
+            const input = row.querySelector('.metric-input');
+            const add = () => {
+                const v = parseFloat(String(input.value).replace(',', '.'));
+                if (isNaN(v)) return;
+                setMetricValue(m.id, Math.max(0, val + v));
+                renderPsychoMetrics();
+            };
+            row.querySelector('.metric-add').addEventListener('click', add);
+            input.addEventListener('keydown', e => { if (e.key === 'Enter') add(); });
+            row.querySelector('.metric-goal').addEventListener('click', () => {
+                const actions = row.querySelector('.metric-actions');
+                actions.innerHTML = `
+                    <span class="goal-edit-label">${isLimit ? 'лимит на день' : 'цель на день'}</span>
+                    <input type="number" class="goal-edit-input" value="${target}" min="0"${m.step ? ` step="${m.step}"` : ''}>
+                    ${m.unit ? `<span class="goal-edit-unit">${m.unit}</span>` : ''}
+                    <button class="goal-edit-save" type="button">ОК</button>
+                    <button class="goal-edit-cancel" type="button" aria-label="Отмена">✕</button>`;
+                const gi = actions.querySelector('.goal-edit-input'); gi.focus(); gi.select();
+                const save = () => {
+                    const t = parseFloat(String(gi.value).replace(',', '.'));
+                    if (!isNaN(t) && t >= 0) { dashState.metricTargets[m.id] = t; saveProgress(); }
+                    renderPsychoMetrics();
+                };
+                actions.querySelector('.goal-edit-save').addEventListener('click', save);
+                actions.querySelector('.goal-edit-cancel').addEventListener('click', renderPsychoMetrics);
+                gi.addEventListener('keydown', ev => { if (ev.key === 'Enter') save(); else if (ev.key === 'Escape') renderPsychoMetrics(); });
+            });
+            const rb = row.querySelector('.metric-reset');
+            if (rb) rb.addEventListener('click', () => { setMetricValue(m.id, 0); renderPsychoMetrics(); });
+            list.appendChild(row);
+        });
     }
 
     // === НАСТРОЙКИ ПРИВЫЧКИ ===
@@ -551,31 +788,63 @@ document.addEventListener('DOMContentLoaded', () => {
         currentEditIndex = index;
         const habit = dashState.habits[index];
         const modal = document.getElementById('habit-settings-modal');
+        const nameInput = document.getElementById('setting-name-input');
         const triggerInput = document.getElementById('setting-trigger-input');
         const reminderToggle = document.getElementById('setting-reminder-toggle');
         const timeInput = document.getElementById('setting-time-input');
+        if (nameInput) nameInput.value = habit.text || '';
         triggerInput.value = habit.triggerText || '';
         if (habit.reminderTime) {
             reminderToggle.checked = true; timeInput.value = habit.reminderTime; timeInput.disabled = false;
         } else {
             reminderToggle.checked = false; timeInput.value = '08:00'; timeInput.disabled = true;
         }
+        // сферы колеса жизни (мультивыбор)
+        const areasBox = document.getElementById('setting-areas');
+        if (areasBox) {
+            areasBox.innerHTML = LIFE_AREAS.map(a => `<button type="button" class="area-chip${(habit.areas || []).includes(a.id) ? ' sel' : ''}" data-area="${a.id}">${a.name}</button>`).join('');
+            areasBox.querySelectorAll('.area-chip').forEach(c => c.addEventListener('click', () => c.classList.toggle('sel')));
+        }
         modal.classList.add('active');
+        // переклонируем кнопки, чтобы сбросить старые обработчики
         const saveBtn = document.getElementById('settings-save-btn').cloneNode(true);
         const cancelBtn = document.getElementById('settings-cancel-btn').cloneNode(true);
         const closeBtn = document.getElementById('habit-settings-close').cloneNode(true);
+        const delBtn = document.getElementById('settings-delete-btn').cloneNode(true);
         document.getElementById('settings-save-btn').replaceWith(saveBtn);
         document.getElementById('settings-cancel-btn').replaceWith(cancelBtn);
         document.getElementById('habit-settings-close').replaceWith(closeBtn);
-        saveBtn.addEventListener('click', () => { saveSettings(); modal.classList.remove('active'); currentEditIndex = null; });
-        cancelBtn.addEventListener('click', () => { modal.classList.remove('active'); currentEditIndex = null; });
-        closeBtn.addEventListener('click', () => { modal.classList.remove('active'); currentEditIndex = null; });
+        document.getElementById('settings-delete-btn').replaceWith(delBtn);
+        const close = () => { modal.classList.remove('active'); currentEditIndex = null; };
+        saveBtn.addEventListener('click', () => { saveSettings(); close(); });
+        cancelBtn.addEventListener('click', close);
+        closeBtn.addEventListener('click', close);
+        delBtn.addEventListener('click', () => {
+            if (currentEditIndex === null) return;
+            const h = dashState.habits[currentEditIndex];
+            if (!confirm(`Удалить привычку «${h.text}»?`)) return;
+            // подчищаем историю удаляемой привычки
+            Object.keys(dashState.history || {}).forEach(d => {
+                if (dashState.history[d][h.uid]) {
+                    delete dashState.history[d][h.uid];
+                    if (!Object.keys(dashState.history[d]).length) delete dashState.history[d];
+                }
+            });
+            dashState.habits.splice(currentEditIndex, 1);
+            saveProgress(); renderDashboardHabits();
+            close();
+        });
         document.querySelector('#setting-reminder-toggle').addEventListener('change', (e) => { timeInput.disabled = !e.target.checked; });
     }
     function saveSettings() {
         if (currentEditIndex === null) return;
+        const nameInput = document.getElementById('setting-name-input');
+        const name = nameInput ? nameInput.value.trim() : '';
+        if (name) dashState.habits[currentEditIndex].text = name;
         dashState.habits[currentEditIndex].triggerText = document.getElementById('setting-trigger-input').value.trim();
         dashState.habits[currentEditIndex].reminderTime = document.getElementById('setting-reminder-toggle').checked ? document.getElementById('setting-time-input').value : null;
+        const areasBox = document.getElementById('setting-areas');
+        if (areasBox) dashState.habits[currentEditIndex].areas = [...areasBox.querySelectorAll('.area-chip.sel')].map(c => c.dataset.area);
         saveProgress(); renderDashboardHabits();
     }
 
@@ -678,7 +947,7 @@ document.addEventListener('DOMContentLoaded', () => {
             status.classList.add('show');
         } else {
             btn.classList.remove('saved');
-            btn.innerHTML = '💾 Сохранить чек-ап';
+            btn.innerHTML = 'Сохранить чек-ап';
             btn.disabled = false;
             status.classList.remove('show');
             btn.style.opacity = '0.5';
@@ -815,28 +1084,38 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (e) {}
     }
 
-    // === АНИМАЦИЯ УРОВНЯ ===
-    const wolfImages = ['Sneaky wolf 1.png', 'Sneaky wolf 2.png', 'Sneaky wolf 3.png', 'Sneaky wolf 4.png', 'Sneaky wolf 5.png', 'Sneaky wolf 6.png'];
-    function showLevelUpAnimation() {
-        const animation = document.getElementById('level-up-animation');
-        const wolfImg = document.getElementById('level-up-wolf-img');
-        if (!animation || !wolfImg) return;
-        wolfImg.src = `pics/${wolfImages[Math.floor(Math.random() * wolfImages.length)]}`;
-        animation.classList.add('show');
-        setTimeout(() => { animation.classList.remove('show'); }, 7000);
+    // === НАЧИСЛЕНИЕ XP (единая точка: уровень + разблокировка игр) ===
+    function awardXP(amount) {
+        dashState.currentXP += amount;
+        const stats = getLevelStats(dashState.level);
+        if (dashState.currentXP >= stats.xpNeeded) {
+            dashState.level++; dashState.currentXP = 0;
+            pulseLevel();
+            updateProgressUI(); saveProgress();
+            checkGameUnlock(); // выбор новой игры на ур. 3 / 7
+        } else {
+            updateProgressUI(); saveProgress();
+        }
     }
+    window.awardXP = awardXP;
 
-    // === ТРЕНИРОВКА: МЕНЮ И ИГРЫ ===
+    // === ИГРЫ: МЕНЮ ===
     function initTrainingMenu() {
         const container = document.getElementById('training-games-container');
         if (!container) return;
-        container.innerHTML = `
-            <div class="training-menu">
-                <div class="training-card" data-game="count"><span class="training-icon">🔢</span><span class="training-name">Посчитай</span><span class="training-desc">Быстрый счёт на время</span></div>
-                <div class="training-card" data-game="memory"><span class="training-icon">🃏</span><span class="training-name">Найди пару</span><span class="training-desc">Тренировка памяти</span></div>
-                <div class="training-card" data-game="words"><span class="training-icon">📝</span><span class="training-name">10 слов</span><span class="training-desc">Запомни и введи</span></div>
+        checkGameUnlock(); // если есть невыбранная разблокировка — предложить выбор
+        const cards = GAME_ORDER.map(g => {
+            const unlocked = dashState.unlockedGames.includes(g);
+            return `<div class="training-card${unlocked ? '' : ' locked'}" data-game="${unlocked ? g : ''}">
+                <span class="training-name">${GAMES[g].name}</span>
+                <span class="training-desc">${unlocked ? GAMES[g].desc : 'Откроется с уровнем'}</span>
+                ${unlocked ? '' : `<span class="training-lock">${LOCK}</span>`}
             </div>`;
-        container.querySelectorAll('.training-card').forEach(card => {
+        }).join('');
+        const remaining = UNLOCK_LEVELS.filter(l => dashState.level < l).slice(0, lockedGames().length);
+        const hint = remaining.length ? `<div class="training-hint">Новые игры открываются на ур. ${remaining.join(' и ')}</div>` : '';
+        container.innerHTML = `<div class="training-menu">${cards}</div>${hint}`;
+        container.querySelectorAll('.training-card:not(.locked)').forEach(card => {
             card.addEventListener('click', () => startTrainingGame(card.dataset.game));
         });
     }
@@ -891,7 +1170,7 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('menu-count').onclick = () => initTrainingMenu();
             document.getElementById('back-count').onclick = () => initTrainingMenu();
             const earned = Math.max(1, Math.min(10, correct));
-            if (window.dashState) { window.dashState.currentXP += earned; const stats = window.getLevelStats?.(window.dashState.level) || { xpNeeded: 15 }; if (window.dashState.currentXP >= stats.xpNeeded) { window.dashState.level++; window.dashState.currentXP = 0; } window.saveProgress?.(); window.updateProgressUI?.(); }
+            if (window.awardXP) window.awardXP(earned);
         }
         document.querySelectorAll('#count-setup .difficulty-btn').forEach(btn => btn.addEventListener('click', (e) => start(parseInt(e.target.dataset.diff))));
         document.getElementById('count-input')?.addEventListener('keypress', (e) => {
@@ -951,7 +1230,7 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('retry-memory').onclick = () => renderMemoryGame(container);
             document.getElementById('menu-memory').onclick = () => initTrainingMenu();
             document.getElementById('back-memory').onclick = () => initTrainingMenu();
-            if (window.dashState) { window.dashState.currentXP += xp; const stats = window.getLevelStats?.(window.dashState.level) || { xpNeeded: 15 }; if (window.dashState.currentXP >= stats.xpNeeded) { window.dashState.level++; window.dashState.currentXP = 0; } window.saveProgress?.(); window.updateProgressUI?.(); }
+            if (window.awardXP) window.awardXP(xp);
         }
         createCards(); render();
         document.getElementById('training-back').onclick = () => initTrainingMenu();
@@ -984,7 +1263,7 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('retry-words').onclick = () => renderWordsGame(container);
             document.getElementById('menu-words').onclick = () => initTrainingMenu();
             document.getElementById('back-words').onclick = () => initTrainingMenu();
-            if (window.dashState) { window.dashState.currentXP += xp; const stats = window.getLevelStats?.(window.dashState.level) || { xpNeeded: 15 }; if (window.dashState.currentXP >= stats.xpNeeded) { window.dashState.level++; window.dashState.currentXP = 0; } window.saveProgress?.(); window.updateProgressUI?.(); }
+            if (window.awardXP) window.awardXP(xp);
         }
         document.getElementById('words-input')?.addEventListener('keypress', (e) => {
             if (e.key === 'Enter' && phase === 'guess') {
@@ -1162,7 +1441,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // === ИСПРАВЛЕНИЕ: Показываем кнопку и ВЕШАЕМ ОБРАБОТЧИК ===
         if (saveBtn) {
             saveBtn.style.display = 'inline-block';
-            saveBtn.innerHTML = '💾 Обновить чек-ап';
+            saveBtn.innerHTML = 'Обновить чек-ап';
             saveBtn.disabled = false;
             saveBtn.classList.remove('saved');
             // Явно назначаем функцию сохранения
@@ -1264,7 +1543,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const backBtn = document.createElement('button');
         backBtn.className = 'checkin-save-btn';
         backBtn.id = 'back-to-today-btn';
-        backBtn.innerHTML = '↩ Вернуться к сегодня';
+        backBtn.innerHTML = '← Вернуться к сегодня';
         backBtn.onclick = () => loadTodayData(type);
         saveBtn.parentNode.appendChild(backBtn);
     }
@@ -1282,7 +1561,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         modal.innerHTML = `
             <div class="analytics-header">
-                <h3>📊 Аналитика</h3>
+                <h3>Аналитика</h3>
                 <button class="analytics-close" id="analytics-close-btn">✕</button>
             </div>
             <div class="analytics-controls">
@@ -1479,6 +1758,10 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.view-btn').forEach(btn => {
         btn.addEventListener('click', () => switchView(btn.dataset.view));
     });
+
+    // === ТУМБЛЕР PSYCHO MODE ===
+    const psychoToggleEl = document.getElementById('psycho-toggle');
+    if (psychoToggleEl) psychoToggleEl.addEventListener('click', () => setPsychoMode(!dashState.psychoMode));
 
     // === ЗАПУСК ===
     init();
