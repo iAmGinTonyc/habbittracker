@@ -34,14 +34,16 @@ document.addEventListener('DOMContentLoaded', () => {
         level: 1,
         currentXP: 0,
         habits: [],
-        unlockedGames: ['memory'],
+        unlockedGames: [], // пусто на старте → игрок выбирает первую игру сам
         lastActiveDate: null,
         checkins: { morning: {}, evening: {} },
         checkinHistory: {},
         history: {},        // постоянный лог выполнения привычек: { 'YYYY-MM-DD': { uid: true } }
         psychoMode: false,  // тумблер «psycho mode» (числовые метрики вместо привычек)
         metricTargets: {},  // переопределённые цели метрик { metricId: число }
-        metricLog: {}       // числовые метрики по дням: { 'YYYY-MM-DD': { metricId: число|bool } }
+        metricLog: {},      // числовые метрики по дням: { 'YYYY-MM-DD': { metricId: число|bool } }
+        onboardingDone: false, // пройден ли вводный тур
+        seenHints: {}       // показанные контекстные подсказки по вкладкам
     };
 
     function saveProgress() {
@@ -147,12 +149,12 @@ document.addEventListener('DOMContentLoaded', () => {
         { id: 'run',      name: 'км пробежал',          unit: 'км',    type: 'goal',  target: 10,   step: 0.1 },
         { id: 'calories', name: 'калорий употребил',    unit: 'ккал',  type: 'limit', target: 2000 },
         { id: 'sleep',    name: 'часов поспал',         unit: 'ч',     type: 'goal',  target: 8,    step: 0.5 },
-        { id: 'claude',   name: 'истратил лимит Claude',unit: '',      type: 'binary' },
         { id: 'money',    name: 'денег заработал',      unit: '₽',     type: 'goal',  target: 3000 },
         { id: 'meditate', name: 'минут медитировал',    unit: 'мин',   type: 'goal',  target: 15 },
         { id: 'pages',    name: 'страниц прочитал',     unit: 'стр',   type: 'goal',  target: 30 },
         { id: 'cigs',     name: 'сигарет скурил',       unit: 'шт',    type: 'limit', target: 0 },
-        { id: 'coffee',   name: 'кофе выпил',           unit: 'чашек', type: 'limit', target: 2 }
+        { id: 'coffee',   name: 'кофе выпил',           unit: 'чашек', type: 'limit', target: 2 },
+        { id: 'claude',   name: 'истратил лимит Claude',unit: '',      type: 'binary' }
     ];
     const metricTarget = m => {
         const t = dashState.metricTargets && dashState.metricTargets[m.id];
@@ -164,14 +166,16 @@ document.addEventListener('DOMContentLoaded', () => {
             level: 1,
             currentXP: 0,
             habits: DEFAULT_HABITS.map(text => ({ text, completed: false, uid: newUid(), areas: [] })),
-            unlockedGames: ['memory'], // старт только «Найди пару»
+            unlockedGames: [], // пусто на старте → выбор первой игры при открытии «Игр»
             lastActiveDate: todayKey(),
             checkins: { morning: {}, evening: {} },
             checkinHistory: {},
             history: {},
             psychoMode: false,
             metricTargets: {},
-            metricLog: {}
+            metricLog: {},
+            onboardingDone: false, // новый пользователь — покажем тур
+            seenHints: {}
         };
     }
 
@@ -183,10 +187,13 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!dashState.checkins) dashState.checkins = { morning: {}, evening: {} };
             if (!dashState.checkinHistory) dashState.checkinHistory = {};
             if (!dashState.history) dashState.history = {};
-            if (!dashState.unlockedGames) dashState.unlockedGames = ['memory'];
+            if (!dashState.unlockedGames) dashState.unlockedGames = [];
             if (!dashState.metricLog) dashState.metricLog = {};
             if (!dashState.metricTargets) dashState.metricTargets = {};
             if (typeof dashState.psychoMode !== 'boolean') dashState.psychoMode = false;
+            // существующих пользователей считаем уже «онбордившимися» — тур не показываем
+            if (typeof dashState.onboardingDone !== 'boolean') { dashState.onboardingDone = true; dashState.seenHints = { month: true, morning: true, evening: true }; }
+            if (!dashState.seenHints) dashState.seenHints = {};
             ensureHabitUids(); // миграция: гарантируем uid у старых привычек
             dashState.habits.forEach(h => { if (!Array.isArray(h.areas)) h.areas = []; });
             window.dashState = dashState;
@@ -243,8 +250,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (viewName === 'habits') renderDayView();
         else if (viewName === 'training') initTrainingMenu();
         else if (viewName === 'month') { monthCursor = null; renderMonthView(); }
+        else if (viewName === 'pet') renderPet();
         else if (viewName === 'morning' || viewName === 'evening') initCheckins(viewName);
         updateCheckinButtonPulse();
+        maybeShowViewHint(viewName); // контекстная подсказка при первом заходе
     }
 
     function updateCheckinButtonPulse() {
@@ -288,9 +297,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const GAMES = {
         memory: { name: 'Найди пару', desc: 'Тренировка памяти' },
         count:  { name: 'Посчитай', desc: 'Быстрый счёт на время' },
-        words:  { name: '10 слов', desc: 'Запомни и введи' }
+        words:  { name: '10 слов', desc: 'Запомни и введи' },
+        sudoku: { name: 'Быстрое судоку', desc: 'По пропуску в квадрате' }
     };
-    const GAME_ORDER = ['memory', 'count', 'words'];
+    const GAME_ORDER = ['memory', 'count', 'words', 'sudoku'];
     const UNLOCK_LEVELS = [3, 7, 10]; // на этих уровнях даётся выбор новой игры
     const maxUnlockable = () => Math.min(1 + UNLOCK_LEVELS.filter(l => dashState.level >= l).length, GAME_ORDER.length);
     const lockedGames = () => GAME_ORDER.filter(g => !dashState.unlockedGames.includes(g));
@@ -300,9 +310,20 @@ document.addEventListener('DOMContentLoaded', () => {
     function openGameUnlockModal() {
         const modal = document.getElementById('game-unlock-modal');
         const list = document.getElementById('game-unlock-list');
-        const lvl = document.getElementById('game-unlock-level');
         if (!modal || !list) return;
-        if (lvl) lvl.textContent = dashState.level;
+        const first = dashState.unlockedGames.length === 0; // самый первый выбор игры
+        const badge = modal.querySelector('.game-unlock-badge');
+        const title = modal.querySelector('.game-unlock-title');
+        const sub = modal.querySelector('.game-unlock-subtitle');
+        if (first) {
+            if (badge) badge.style.display = 'none';
+            if (title) title.textContent = 'Выбери первую игру';
+            if (sub) sub.textContent = 'Следующие открываются с уровнями';
+        } else {
+            if (badge) { badge.style.display = ''; badge.innerHTML = `уровень <span id="game-unlock-level">${dashState.level}</span>`; }
+            if (title) title.textContent = 'Новая игра открыта';
+            if (sub) sub.textContent = 'Выбери, что добавить';
+        }
         list.innerHTML = '';
         lockedGames().forEach(g => {
             const opt = document.createElement('button');
@@ -312,7 +333,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 dashState.unlockedGames.push(g);
                 saveProgress();
                 modal.classList.remove('active');
-                checkGameUnlock(); // на случай, если открыто сразу несколько порогов
+                initTrainingMenu(); // перерисовать меню + проверить следующий порог
             });
             list.appendChild(opt);
         });
@@ -332,6 +353,8 @@ document.addEventListener('DOMContentLoaded', () => {
         startReminderChecker();
         updateCheckinButtonPulse();
         initHistoryLogic();
+        updatePetRoamer(); // десктоп: запустить «бегающего» питомца
+        if (!dashState.onboardingDone) setTimeout(() => startTour(DAY_TOUR), 700); // новый пользователь — вводный тур
     }
 
     function updateDashDate() {
@@ -478,7 +501,6 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="month-hint">клик по клетке — отметить день · сегодня выделено рамкой</div>
             ${habits.length ? `<div class="heatmap" id="heatmap"></div>` : `<p class="month-empty">Пока нет привычек — добавь их во вкладке «Привычки».</p>`}
             <div class="month-wheel-block">
-                <div class="month-chart-title">Колесо жизни за месяц</div>
                 <div id="life-wheel-month"></div>
             </div>
             <div class="month-chart-block">
@@ -574,9 +596,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 <button class="month-nav" id="month-next">→</button>
             </div>
             <div class="month-hint">сумма за месяц · цель = дневная × ${days} дн.</div>
-            <div class="pm-list">${rows}</div>`;
+            <div class="pm-list">${rows}</div>
+            <div class="month-chart-block">
+                <div class="month-chart-title">Настроение и качество сна</div>
+                <canvas id="month-ms-chart" width="600" height="150"></canvas>
+                <div class="month-legend"><span class="lg lg-mood">● Настроение</span><span class="lg lg-sleep">● Качество сна</span></div>
+            </div>`;
         document.getElementById('month-prev').onclick = () => { if (--monthCursor.m < 0) { monthCursor.m = 11; monthCursor.y--; } renderMonthView(); };
         document.getElementById('month-next').onclick = () => { if (++monthCursor.m > 11) { monthCursor.m = 0; monthCursor.y++; } renderMonthView(); };
+        drawMonthMoodSleep(y, m, days);
     }
 
     // Линия настроения и качества сна за месяц (данные из утренних чек-апов)
@@ -781,6 +809,204 @@ document.addEventListener('DOMContentLoaded', () => {
             if (rb) rb.addEventListener('click', () => { setMetricValue(m.id, 0); renderPsychoMetrics(); });
             list.appendChild(row);
         });
+    }
+
+    // =========================================
+    //   ПИТОМЕЦ (контракт для визуала, который добавим отдельно)
+    //   стадия = от уровня; настроение = забота за 7 дней
+    // =========================================
+    const PET_STAGES = [
+        { min: 10, name: 'Вожак',     stage: 4 },
+        { min: 5,  name: 'Взрослый',  stage: 3 },
+        { min: 2,  name: 'Подросток', stage: 2 },
+        { min: 0,  name: 'Щенок',     stage: 1 }
+    ];
+    const PET_MOODS = [
+        { min: 75, mood: 3, label: 'В отличной форме', note: 'ты держишь ритм' },
+        { min: 50, mood: 2, label: 'Бодр',             note: 'так держать' },
+        { min: 25, mood: 1, label: 'Подустал',         note: 'не пропадай надолго' },
+        { min: 0,  mood: 0, label: 'Приуныл',          note: 'загляни почаще' }
+    ];
+
+    function petState() {
+        const level = dashState.level || 1;
+        const st = PET_STAGES.find(x => level >= x.min);
+        const habits = dashState.habits || [];
+        let sum = 0, activeDays = 0;
+        for (let i = 0; i < 7; i++) {
+            const d = new Date(); d.setDate(d.getDate() - i);
+            const key = fdt(d.getFullYear(), d.getMonth(), d.getDate());
+            const rec = (dashState.history || {})[key] || {};
+            const done = habits.filter(h => rec[h.uid]).length;
+            let day = habits.length ? done / habits.length : 0;
+            if (done > 0) activeDays++;
+            const ch = (dashState.checkinHistory || {})[key];
+            if (ch && (ch.morning || ch.evening)) day = Math.min(1, day + 0.1); // чек-ап — тоже забота
+            sum += day;
+        }
+        const maxStreak = habits.length ? Math.max(0, ...habits.map(h => currentStreak(h.uid))) : 0;
+        const care = Math.max(0, Math.min(100, Math.round((sum / 7) * 100 + Math.min(15, maxStreak * 2))));
+        const md = PET_MOODS.find(x => care >= x.min);
+        return { level, stage: st.stage, stageName: st.name, care, mood: md.mood, moodLabel: md.label, moodNote: md.note, maxStreak, activeDays };
+    }
+    window.petState = petState; // для будущего визуала
+
+    function renderPet() {
+        const root = document.getElementById('view-pet');
+        if (!root) return;
+        const p = petState();
+        root.innerHTML = `
+            <div class="pet-stage">${p.stageName} · уровень ${p.level}</div>
+            <div class="pet-figure" data-stage="${p.stage}" data-mood="${p.mood}" id="pet-figure">
+                <div class="pet-placeholder">питомец<br><span>стадия ${p.stage} · настроение ${p.mood}</span></div>
+            </div>
+            <div class="pet-mood">${p.moodLabel} <span class="pet-mood-note">— ${p.moodNote}</span></div>
+            <div class="pet-care">
+                <div class="pet-care-top"><span>забота за неделю</span><span class="pet-care-pct">${p.care}%</span></div>
+                <div class="pet-care-bar"><i style="width:${p.care}%"></i></div>
+            </div>
+            <div class="pet-stats">
+                <div class="pet-stat"><span>${p.maxStreak}</span>серия</div>
+                <div class="pet-stat"><span>${p.activeDays}/7</span>активных дней</div>
+                <div class="pet-stat"><span>${p.stage}/4</span>стадия</div>
+            </div>
+            <button class="pet-pet-btn" id="pet-pet-btn">погладить</button>`;
+        const fig = root.querySelector('#pet-figure');
+        setPetFigure(fig, p.stage, p.mood);
+        root.querySelector('#pet-pet-btn').addEventListener('click', () => {
+            fig.classList.remove('bounce'); void fig.offsetWidth; fig.classList.add('bounce');
+        });
+        updatePetRoamer();
+    }
+
+    // Подставляет картинку питомца: pics/wolf {стадия}_{настроение}.png.
+    // Пока есть не все комбинации — фолбэк на настроение 3 той же стадии, иначе остаётся плейсхолдер.
+    function setPetFigure(container, stage, mood) {
+        const candidates = [`pics/wolf ${stage}_${mood}.png`, `pics/wolf ${stage}_3.png`];
+        let i = 0;
+        const tryNext = () => {
+            if (i >= candidates.length) return; // не нашли — оставляем плейсхолдер
+            const url = encodeURI(candidates[i]);
+            const probe = new Image();
+            probe.onload = () => { container.classList.add('has-img'); container.innerHTML = `<img class="pet-img" src="${url}" alt="питомец">`; };
+            probe.onerror = () => { i++; tryNext(); };
+            probe.src = url;
+        };
+        tryNext();
+    }
+
+    // Десктоп: питомец «бегает» по экранам (на мобильном скрыт)
+    let petRoamTimer = null;
+    const ROAMER_ENABLED = false; // временно скрыт по просьбе — поставь true, чтобы вернуть «бегающего» питомца
+    function updatePetRoamer() {
+        const roamer = document.getElementById('pet-roamer');
+        if (!roamer) return;
+        if (!ROAMER_ENABLED || window.matchMedia('(max-width: 900px)').matches) { roamer.style.display = 'none'; if (petRoamTimer) { clearInterval(petRoamTimer); petRoamTimer = null; } return; }
+        roamer.style.display = 'block';
+        const ps = petState();
+        roamer.dataset.stage = ps.stage;
+        roamer.dataset.mood = ps.mood;
+        const move = () => {
+            const x = 24 + Math.random() * Math.max(0, window.innerWidth - 130);
+            const y = 90 + Math.random() * Math.max(0, window.innerHeight - 260);
+            roamer.style.transform = `translate(${Math.round(x)}px, ${Math.round(y)}px)`;
+        };
+        if (!petRoamTimer) { move(); petRoamTimer = setInterval(move, 5000); }
+    }
+
+    // =========================================
+    //   ОНБОРДИНГ: КОАЧМАРКИ + КОНТЕКСТНЫЕ ПОДСКАЗКИ
+    // =========================================
+    const DAY_TOUR = [
+        { text: 'Привет! Это трекер привычек и твоего состояния. Покажу за 20 секунд, что где.' },
+        { target: () => document.querySelector('.dash-habit-row .habit-check'), text: 'Нажимай по квадрату, чтобы отметить привычку за день. За регулярность копится серия.' },
+        { target: () => document.querySelector('.dash-habit-row .habit-settings-icon'), text: 'Кнопка «⋯» — переименовать привычку, поставить напоминание, привязать к сфере жизни и удалить.' },
+        { target: () => document.getElementById('new-habit-input') || document.querySelector('.dash-habit-limit') || document.getElementById('dash-habit-list'), text: 'Список — твой. Удали лишнее через «⋯», и появится поле, чтобы добавить свою привычку (до 10).' },
+        { target: () => document.getElementById('life-wheel-day'), text: 'Привяжи привычки к сферам жизни (в «⋯») — колесо заполнится и покажет баланс.' },
+        { target: () => document.getElementById('psycho-toggle'), text: 'Psycho mode — числовые показатели дня (км, сон, кофе…) вместо списка привычек.' },
+        { target: () => document.querySelector('.view-switcher'), text: 'Месяц — история и графики. Игры — мини-игры за уровни. Утро и Вечер — короткие чек-апы дня.' }
+    ];
+
+    const VIEW_HINTS = {
+        month:   'История по дням: тёмная клетка — выполнено. Кликни по любому дню, чтобы отметить задним числом.',
+        morning: 'Утренний чек-ап: во сколько лёг и встал, качество сна, настроение, фокус. Нажми «Сохранить» — данные пойдут в графики «Месяца».',
+        evening: 'Вечерний чек-ап: оценка дня, за что благодарен и что улучшить завтра.'
+    };
+
+    let tourSteps = [], tourIdx = 0;
+    function startTour(steps) {
+        tourSteps = steps; tourIdx = 0;
+        const ov = document.getElementById('coach-overlay');
+        if (!ov) return;
+        ov.classList.add('active');
+        showCoachStep(0);
+    }
+    function endTour() {
+        const ov = document.getElementById('coach-overlay');
+        if (ov) ov.classList.remove('active');
+        if (!dashState.onboardingDone) { dashState.onboardingDone = true; saveProgress(); }
+    }
+    function showCoachStep(i) {
+        if (i < 0 || i >= tourSteps.length) { endTour(); return; }
+        tourIdx = i;
+        const step = tourSteps[i];
+        const el = typeof step.target === 'function' ? step.target() : (step.target ? document.querySelector(step.target) : null);
+        if (el && el.scrollIntoView) el.scrollIntoView({ block: 'center', behavior: 'smooth' });
+        setTimeout(() => positionCoach(el, step, i), el ? 320 : 0);
+    }
+    function positionCoach(el, step, i) {
+        const hole = document.getElementById('coach-hole');
+        const tip = document.getElementById('coach-tip');
+        if (!hole || !tip) return;
+        const pad = 8;
+        let placeBelow = true, r = null;
+        if (el) {
+            r = el.getBoundingClientRect();
+            hole.style.display = 'block';
+            hole.style.left = (r.left - pad) + 'px';
+            hole.style.top = (r.top - pad) + 'px';
+            hole.style.width = (r.width + pad * 2) + 'px';
+            hole.style.height = (r.height + pad * 2) + 'px';
+            placeBelow = r.top < window.innerHeight / 2;
+        } else {
+            // нет цели (приветствие) — дырка нулевого размера в центре, чтобы затемнить весь экран
+            hole.style.display = 'block';
+            hole.style.left = (window.innerWidth / 2) + 'px';
+            hole.style.top = (window.innerHeight / 2) + 'px';
+            hole.style.width = '0px';
+            hole.style.height = '0px';
+        }
+        const last = i === tourSteps.length - 1;
+        tip.querySelector('.coach-text').textContent = step.text;
+        tip.querySelector('.coach-counter').textContent = `${i + 1} / ${tourSteps.length}`;
+        tip.querySelector('.coach-next').textContent = last ? 'Готово' : 'Далее';
+        tip.style.display = 'block';
+        const tr = tip.getBoundingClientRect();
+        let left, top;
+        if (!el) {
+            left = (window.innerWidth - tr.width) / 2;
+            top = (window.innerHeight - tr.height) / 2;
+        } else {
+            left = Math.min(Math.max(8, r.left + r.width / 2 - tr.width / 2), window.innerWidth - tr.width - 8);
+            top = placeBelow ? (r.bottom + pad + 12) : (r.top - pad - 12 - tr.height);
+            top = Math.min(Math.max(8, top), window.innerHeight - tr.height - 8);
+        }
+        tip.style.left = Math.round(left) + 'px';
+        tip.style.top = Math.round(top) + 'px';
+    }
+
+    // Контекстная подсказка при первом заходе во вкладку
+    function maybeShowViewHint(view) {
+        const banner = document.getElementById('onb-hint');
+        if (!banner) return;
+        if (VIEW_HINTS[view] && !dashState.seenHints[view]) {
+            banner.querySelector('.onb-hint-text').textContent = VIEW_HINTS[view];
+            banner.style.display = 'flex';
+            dashState.seenHints[view] = true;
+            saveProgress();
+        } else {
+            banner.style.display = 'none';
+        }
     }
 
     // === НАСТРОЙКИ ПРИВЫЧКИ ===
@@ -1113,7 +1339,8 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>`;
         }).join('');
         const remaining = UNLOCK_LEVELS.filter(l => dashState.level < l).slice(0, lockedGames().length);
-        const hint = remaining.length ? `<div class="training-hint">Новые игры открываются на ур. ${remaining.join(' и ')}</div>` : '';
+        const remainingStr = remaining.length > 1 ? remaining.slice(0, -1).join(', ') + ' и ' + remaining.slice(-1) : remaining[0];
+        const hint = remaining.length ? `<div class="training-hint">Новые игры открываются на ур. ${remainingStr}</div>` : '';
         container.innerHTML = `<div class="training-menu">${cards}</div>${hint}`;
         container.querySelectorAll('.training-card:not(.locked)').forEach(card => {
             card.addEventListener('click', () => startTrainingGame(card.dataset.game));
@@ -1129,7 +1356,77 @@ document.addEventListener('DOMContentLoaded', () => {
             case 'count': renderCountGame(container); break;
             case 'memory': renderMemoryGame(container); break;
             case 'words': renderWordsGame(container); break;
+            case 'sudoku': renderSudokuGame(container); break;
         }
+    }
+
+    // === ИГРА: БЫСТРОЕ СУДОКУ (1 пропуск в каждом квадрате 3×3) ===
+    function renderSudokuGame(container) {
+        // 1) генерируем валидное решение 9×9 перестановками базового шаблона
+        const b = 3, side = 9, rb = [0, 1, 2];
+        const sh = a => a.slice().sort(() => Math.random() - 0.5);
+        const pat = (r, c) => (b * (r % b) + Math.floor(r / b) + c) % side;
+        const rows = [].concat(...sh(rb).map(g => sh(rb).map(r => g * b + r)));
+        const cols = [].concat(...sh(rb).map(g => sh(rb).map(c => g * b + c)));
+        const nums = sh([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+        const solution = rows.map(r => cols.map(c => nums[pat(r, c)]));
+
+        // 2) в каждом из 9 квадратов 3×3 убираем ровно одну клетку
+        const blanks = {}; // "r-c" -> правильное значение
+        for (let br = 0; br < 3; br++) for (let bc = 0; bc < 3; bc++) {
+            const rr = br * 3 + Math.floor(Math.random() * 3);
+            const cc = bc * 3 + Math.floor(Math.random() * 3);
+            blanks[`${rr}-${cc}`] = solution[rr][cc];
+        }
+
+        let cells = '';
+        for (let r = 0; r < 9; r++) for (let c = 0; c < 9; c++) {
+            const edgeR = (r % 3 === 0 && r !== 0) ? ' br-top' : '';
+            const edgeC = (c % 3 === 0 && c !== 0) ? ' br-left' : '';
+            if (blanks[`${r}-${c}`] !== undefined) {
+                cells += `<input class="sudoku-cell blank${edgeR}${edgeC}" inputmode="numeric" maxlength="1" data-key="${r}-${c}">`;
+            } else {
+                cells += `<div class="sudoku-cell given${edgeR}${edgeC}">${solution[r][c]}</div>`;
+            }
+        }
+
+        container.innerHTML = `
+            <div class="game-setup" style="text-align:center">
+                <h3 class="dash-subtitle" style="margin-bottom:4px">Быстрое судоку</h3>
+                <p class="training-desc" style="margin-bottom:14px">Заполни по одной пустой клетке в каждом квадрате</p>
+                <div id="sudoku-grid">${cells}</div>
+                <button class="training-btn primary" id="sudoku-check" style="margin-top:16px">Проверить</button>
+            </div>
+            <button class="training-back-btn" id="training-back">← Назад</button>`;
+
+        // ввод только цифр 1-9, авто-переход к следующей пустой клетке
+        const inputs = [...container.querySelectorAll('.sudoku-cell.blank')];
+        inputs.forEach((inp, i) => {
+            inp.addEventListener('input', () => {
+                inp.value = inp.value.replace(/[^1-9]/g, '').slice(0, 1);
+                inp.classList.remove('wrong', 'right');
+                if (inp.value && inputs[i + 1]) inputs[i + 1].focus();
+            });
+        });
+
+        document.getElementById('sudoku-check').onclick = () => {
+            let correct = 0, filled = 0;
+            inputs.forEach(inp => {
+                const ok = +inp.value === blanks[inp.dataset.key];
+                if (inp.value) filled++;
+                inp.classList.toggle('right', ok);
+                inp.classList.toggle('wrong', !!inp.value && !ok);
+                if (ok) correct++;
+            });
+            if (correct < 9) return; // не всё верно — даём дорешать
+            const xp = 9;
+            container.innerHTML = `<div class="training-result"><div class="training-result-title">Решено!</div><div class="training-result-message">Все 9 клеток верны</div><div class="training-xp-badge">+${xp} XP</div><div class="training-result-buttons"><button class="training-btn primary" id="retry-sudoku">Ещё раз</button><button class="training-btn secondary" id="menu-sudoku">В меню</button></div><button class="training-back-btn" id="back-sudoku">← Назад</button></div>`;
+            document.getElementById('retry-sudoku').onclick = () => renderSudokuGame(container);
+            document.getElementById('menu-sudoku').onclick = () => initTrainingMenu();
+            document.getElementById('back-sudoku').onclick = () => initTrainingMenu();
+            if (window.awardXP) window.awardXP(xp);
+        };
+        document.getElementById('training-back').onclick = () => initTrainingMenu();
     }
 
     function stopTrainingGame() {
@@ -1762,6 +2059,22 @@ document.addEventListener('DOMContentLoaded', () => {
     // === ТУМБЛЕР PSYCHO MODE ===
     const psychoToggleEl = document.getElementById('psycho-toggle');
     if (psychoToggleEl) psychoToggleEl.addEventListener('click', () => setPsychoMode(!dashState.psychoMode));
+
+    // === ПИТОМЕЦ: «бегающий» роумер (десктоп) ===
+    const petRoamerEl = document.getElementById('pet-roamer');
+    if (petRoamerEl) petRoamerEl.addEventListener('click', () => switchView('pet'));
+    window.addEventListener('resize', () => { if (dashboardScreen.classList.contains('visible')) updatePetRoamer(); });
+
+    // === ОНБОРДИНГ: кнопки тура, «?» и подсказки ===
+    const coachNext = document.querySelector('.coach-next');
+    const coachSkip = document.querySelector('.coach-skip');
+    if (coachNext) coachNext.addEventListener('click', () => showCoachStep(tourIdx + 1));
+    if (coachSkip) coachSkip.addEventListener('click', () => endTour());
+    const helpBtn = document.getElementById('help-btn');
+    if (helpBtn) helpBtn.addEventListener('click', () => { if (dashState.psychoMode) setPsychoMode(false); switchView('habits'); setTimeout(() => startTour(DAY_TOUR), 200); });
+    const hintClose = document.getElementById('onb-hint-close');
+    if (hintClose) hintClose.addEventListener('click', () => { document.getElementById('onb-hint').style.display = 'none'; });
+    window.addEventListener('resize', () => { if (document.getElementById('coach-overlay')?.classList.contains('active')) showCoachStep(tourIdx); });
 
     // === ЗАПУСК ===
     init();

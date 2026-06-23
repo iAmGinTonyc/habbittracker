@@ -21,7 +21,10 @@
 
     <!-- ЭКРАН: ДАШБОРД (сразу после интро) -->
     <section id="dashboard-screen" class="hidden">
-        <div class="reset-btn" id="reset-btn">↺</div>
+        <div class="dash-toprow">
+            <button class="icon-btn" id="reset-btn" type="button" aria-label="Сбросить прогресс">↺</button>
+            <button class="icon-btn" id="help-btn" type="button" aria-label="Как это работает">?</button>
+        </div>
         <div class="dash-header">
             <span class="dash-date" id="dash-date">—</span>
             <div class="dash-level">
@@ -30,16 +33,22 @@
             </div>
         </div>
 
+        <!-- Контекстная подсказка онбординга -->
+        <div id="onb-hint" class="onb-hint">
+            <span class="onb-hint-text"></span>
+            <button class="onb-hint-close" id="onb-hint-close" type="button">Понятно</button>
+        </div>
+
         <!-- ЦЕНТРАЛЬНАЯ ОБЛАСТЬ С КОНТЕНТОМ -->
         <div class="dash-content">
             <!-- Привычки -->
             <div id="view-habits" class="dash-view active">
                 <!-- Обычный режим: колесо жизни + привычки -->
                 <div id="day-normal">
-                    <div id="life-wheel-day" class="life-wheel"></div>
                     <h3 class="dash-subtitle">Задачи на сегодня</h3>
                     <div class="timer-subtitle" id="reset-timer">до обновления: 00:00:00</div>
                     <div id="dash-habit-list"></div>
+                    <div id="life-wheel-day" class="life-wheel"></div>
                 </div>
                 <!-- Psycho mode: числовые метрики -->
                 <div id="day-psycho" style="display:none">
@@ -116,6 +125,9 @@
                             </div>
                         </div>
                     </div>
+
+            <!-- Питомец -->
+            <div id="view-pet" class="dash-view"></div>
         </div>
 
         <!-- ТУМБЛЕР PSYCHO MODE -->
@@ -131,6 +143,7 @@
             <button class="view-btn" data-view="training"><span class="vb-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/></svg></span><span class="vb-txt">Игры</span></button>
             <button class="view-btn" data-view="morning" id="btn-morning"><span class="vb-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18h18M5.5 14a6.5 6.5 0 0 1 13 0"/><path d="M12 3.5V6M4.5 8L6 9.3M19.5 8L18 9.3"/></svg></span><span class="vb-txt">Утро</span></button>
             <button class="view-btn" data-view="evening" id="btn-evening"><span class="vb-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 0 1 9.5 4 7 7 0 1 0 20 14.5z"/></svg></span><span class="vb-txt">Вечер</span></button>
+            <button class="view-btn" data-view="pet"><span class="vb-ico"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="6.2" cy="11" r="2"/><circle cx="10.4" cy="7.6" r="2"/><circle cx="15" cy="8.2" r="2"/><circle cx="18.4" cy="12" r="1.8"/><path d="M12.2 12.4c-2.5 0-4.3 1.9-4.3 3.9 0 1.7 1.4 2.6 3 2.6.9 0 1.1.3 1.3.3s.4-.3 1.3-.3c1.6 0 3-.9 3-2.6 0-2-1.8-3.9-4.3-3.9z"/></svg></span><span class="vb-txt">Питомец</span></button>
         </div>
 
         <!-- ПРОГРЕСС -->
@@ -146,6 +159,24 @@
             </div>
         </div>
     </section>
+
+    <!-- ПИТОМЕЦ: «бегающий» по экранам на десктопе (визуал — плейсхолдер) -->
+    <div id="pet-roamer" title="Питомец"><div class="pet-roamer-ph">питомец</div></div>
+
+    <!-- ОНБОРДИНГ: коачмарки (затемнение + подсветка + подсказка) -->
+    <div id="coach-overlay">
+        <div id="coach-hole"></div>
+        <div id="coach-tip">
+            <p class="coach-text"></p>
+            <div class="coach-tip-foot">
+                <span class="coach-counter"></span>
+                <div class="coach-btns">
+                    <button class="coach-skip" type="button">Пропустить</button>
+                    <button class="coach-next" type="button">Далее</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- МОДАЛКА: НАСТРОЙКИ ПРИВЫЧКИ -->
     <div id="habit-settings-modal" class="habit-settings-modal">

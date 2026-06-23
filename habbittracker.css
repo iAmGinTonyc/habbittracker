@@ -131,13 +131,15 @@
    /* КНОПКИ ПЕРЕКЛЮЧЕНИЯ (2×2) */
    .view-switcher {
        display: grid;
-       grid-template-columns: repeat(5, 1fr);
+       grid-template-columns: repeat(5, 1fr); /* питомец скрыт → 5 вкладок (для 6 верни repeat(6,1fr) и max-width:600px) */
        gap: 6px;
        width: 100%;
        max-width: 520px;
        margin: 15px auto 10px;
        padding: 0 6px;
    }
+   /* Питомец временно скрыт по просьбе — убери это правило, чтобы вернуть вкладку */
+   .view-btn[data-view="pet"] { display: none; }
    .view-btn {
        padding: 8px 4px;
        font-size: 11px;
@@ -542,7 +544,7 @@ canvas { width: 100%; height: 150px; }
    /* =========================================
       КОЛЕСО ЖИЗНИ
       ========================================= */
-   .life-wheel { margin: 2px 0 14px; }
+   .life-wheel { margin: 26px 0 14px; }
    .wheel-empty { font-size: 12px; color: #bbb; text-align: center; padding: 18px 12px; line-height: 1.5; }
    .month-wheel-block { margin: 6px 0 22px; }
 
@@ -606,6 +608,72 @@ canvas { width: 100%; height: 150px; }
    .pm-val { font-size: 13px; color: #999; white-space: nowrap; font-variant-numeric: tabular-nums; }
    .pm-val b { color: #111; font-weight: 600; }
    .pm-val.over::after { content: " · превышен"; color: #111; font-weight: 500; }
+
+   /* Игра «Быстрое судоку» */
+   #sudoku-grid { display: grid; grid-template-columns: repeat(9, 1fr); width: 100%; max-width: 320px; margin: 0 auto; border: 2px solid #111; border-radius: 6px; overflow: hidden; }
+   .sudoku-cell { display: flex; align-items: center; justify-content: center; aspect-ratio: 1; width: 100%; font-size: 16px; border: 0.5px solid #e0e0e0; box-sizing: border-box; }
+   .sudoku-cell.given { color: #111; background: #fafafa; font-weight: 500; }
+   .sudoku-cell.blank { color: #111; background: #fff; text-align: center; padding: 0; border-radius: 0; outline: none; font-family: inherit; }
+   .sudoku-cell.blank:focus { background: #f2f2f2; border-color: #111; }
+   .sudoku-cell.blank.right { background: #111; color: #fff; }
+   .sudoku-cell.blank.wrong { box-shadow: inset 0 0 0 2px #111; }
+   .sudoku-cell.br-top { border-top: 2px solid #111; }
+   .sudoku-cell.br-left { border-left: 2px solid #111; }
+
+   /* =========================================
+      ПИТОМЕЦ (каркас; визуал добавим отдельно)
+      ========================================= */
+   #view-pet { text-align: center; }
+   .pet-stage { font-size: 13px; color: #999; letter-spacing: 0.5px; margin: 8px 0 16px; }
+   .pet-figure { width: 200px; height: 200px; margin: 0 auto 16px; display: flex; align-items: center; justify-content: center; border: 1.5px dashed #dcdcdc; border-radius: 50%; transition: transform 0.3s; }
+   .pet-figure.has-img { border: none; border-radius: 0; }
+   .pet-img { max-width: 100%; max-height: 100%; object-fit: contain; display: block; }
+   .pet-placeholder { font-size: 13px; color: #bbb; line-height: 1.5; }
+   .pet-placeholder span { font-size: 11px; color: #ccc; }
+   .pet-figure.bounce { animation: petBounce 0.45s ease; }
+   @keyframes petBounce { 0%, 100% { transform: scale(1); } 30% { transform: scale(1.08); } 60% { transform: scale(0.97); } }
+   .pet-mood { font-size: 18px; font-weight: 600; color: #111; margin-bottom: 2px; }
+   .pet-mood-note { font-weight: 400; color: #999; font-size: 14px; }
+   .pet-care { max-width: 360px; margin: 18px auto 0; text-align: left; }
+   .pet-care-top { display: flex; justify-content: space-between; font-size: 12px; color: #999; margin-bottom: 6px; }
+   .pet-care-pct { color: #111; font-weight: 600; }
+   .pet-care-bar { height: 6px; background: #f0f0f0; border-radius: 999px; overflow: hidden; }
+   .pet-care-bar > i { display: block; height: 100%; background: #111; transition: width 0.4s ease; }
+   .pet-stats { display: flex; justify-content: center; gap: 28px; margin: 22px 0; }
+   .pet-stat { display: flex; flex-direction: column; align-items: center; font-size: 11px; color: #999; }
+   .pet-stat span { font-size: 19px; font-weight: 700; color: #111; }
+   .pet-pet-btn { background: none; border: 1px solid #e0e0e0; border-radius: 999px; padding: 9px 22px; font-size: 13px; color: #555; cursor: pointer; font-family: inherit; transition: all 0.2s; }
+   .pet-pet-btn:hover { border-color: #111; color: #111; }
+
+   /* «Бегающий» питомец (десктоп) */
+   #pet-roamer { position: fixed; top: 0; left: 0; width: 52px; height: 52px; display: none; z-index: 1500; cursor: pointer; transition: transform 4s ease-in-out; }
+   .pet-roamer-ph { width: 100%; height: 100%; border: 1.5px dashed #ccc; border-radius: 50%; background: rgba(255,255,255,0.92); display: flex; align-items: center; justify-content: center; font-size: 9px; color: #bbb; }
+   @media (max-width: 900px) { #pet-roamer { display: none !important; } }
+
+   /* =========================================
+      ОНБОРДИНГ
+      ========================================= */
+   .dash-toprow { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+   .icon-btn { width: 28px; height: 28px; border-radius: 50%; border: 1px solid #e0e0e0; background: #fff; color: #999; font-size: 15px; line-height: 1; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; font-family: inherit; transition: all 0.2s; }
+   .icon-btn:hover { border-color: #111; color: #111; }
+
+   .onb-hint { display: none; align-items: center; gap: 12px; background: #f5f5f5; border: 1px solid #ececec; border-radius: 10px; padding: 10px 12px; margin: 0 0 14px; font-size: 13px; color: #444; line-height: 1.45; }
+   .onb-hint-text { flex: 1; }
+   .onb-hint-close { background: none; border: 1px solid #ddd; border-radius: 7px; padding: 5px 11px; font-size: 12px; color: #666; cursor: pointer; flex-shrink: 0; font-family: inherit; }
+   .onb-hint-close:hover { border-color: #111; color: #111; }
+
+   /* Коачмарки: затемнение через box-shadow «дырки» + карточка-подсказка */
+   #coach-overlay { position: fixed; inset: 0; z-index: 4000; display: none; }
+   #coach-overlay.active { display: block; }
+   #coach-hole { position: fixed; border-radius: 10px; box-shadow: 0 0 0 9999px rgba(17,17,17,0.62); transition: all 0.25s ease; pointer-events: none; }
+   #coach-tip { position: fixed; max-width: 300px; width: calc(100% - 32px); background: #fff; border-radius: 14px; padding: 16px 18px; box-shadow: 0 16px 50px rgba(0,0,0,0.28); }
+   .coach-text { font-size: 15px; line-height: 1.45; color: #111; margin: 0 0 14px; }
+   .coach-tip-foot { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+   .coach-counter { font-size: 12px; color: #aaa; font-variant-numeric: tabular-nums; }
+   .coach-btns { display: flex; align-items: center; gap: 6px; }
+   .coach-skip { background: none; border: none; color: #999; font-size: 13px; cursor: pointer; font-family: inherit; padding: 8px 6px; }
+   .coach-skip:hover { color: #111; }
+   .coach-next { background: #111; color: #fff; border: none; border-radius: 8px; padding: 8px 18px; font-size: 13px; cursor: pointer; font-family: inherit; }
 
    /* Инверсия цветов в psycho mode (приложение монохромное → чистый негатив) */
    #dashboard-screen.psycho-invert { filter: invert(1); }
