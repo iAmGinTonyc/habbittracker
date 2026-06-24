@@ -40,6 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
         checkinHistory: {},
         history: {},        // постоянный лог выполнения привычек: { 'YYYY-MM-DD': { uid: true } }
         psychoMode: false,  // тумблер «psycho mode» (числовые метрики вместо привычек)
+        metrics: [],        // живой список метрик (сидируется из DEFAULT_METRICS в init/createDefaultState)
         metricTargets: {},  // переопределённые цели метрик { metricId: число }
         metricLog: {},      // числовые метрики по дням: { 'YYYY-MM-DD': { metricId: число|bool } }
         onboardingDone: false, // пройден ли вводный тур
@@ -125,11 +126,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // === ПРИВЫЧКИ ПО УМОЛЧАНИЮ ===
-    const DEFAULT_HABITS = [
-        'Подъём до 6 утра', 'Тренировка', 'Книга / аудиокнига', 'План на день',
-        'Работа над пет-проджектом', 'Без алкоголя', 'Цифровой детокс',
-        'Холодный душ', 'Медитация', 'Растяжка'
-    ];
+    const DEFAULT_HABITS = ['Подъём до 6 утра', 'Книга', 'Тренировка'];
     const MAX_HABITS = 10;
 
     // === КОЛЕСО ЖИЗНИ: СФЕРЫ ===
@@ -143,19 +140,19 @@ document.addEventListener('DOMContentLoaded', () => {
         { id: 'emotion', name: 'Эмоциональное состояние', short: 'Эмоции' }
     ];
 
-    // === PSYCHO MODE: ФИКСИРОВАННЫЙ НАБОР МЕТРИК ===
-    // type: 'goal' (больше = лучше) | 'limit' (меньше = лучше) | 'binary'
-    const METRICS = [
+    // === PSYCHO MODE: ДЕФОЛТНЫЙ НАБОР МЕТРИК (дальше юзер сам добавляет/удаляет) ===
+    // type: 'goal' (больше = лучше) | 'limit' (меньше = лучше)
+    // Дефолтный набор для новых юзеров. Дальше живой список — в dashState.metrics (юзер сам добавляет/удаляет).
+    const DEFAULT_METRICS = [
         { id: 'run',      name: 'км пробежал',          unit: 'км',    type: 'goal',  target: 10,   step: 0.1 },
-        { id: 'calories', name: 'калорий употребил',    unit: 'ккал',  type: 'limit', target: 2000 },
         { id: 'sleep',    name: 'часов поспал',         unit: 'ч',     type: 'goal',  target: 8,    step: 0.5 },
         { id: 'money',    name: 'денег заработал',      unit: '₽',     type: 'goal',  target: 3000 },
         { id: 'meditate', name: 'минут медитировал',    unit: 'мин',   type: 'goal',  target: 15 },
         { id: 'pages',    name: 'страниц прочитал',     unit: 'стр',   type: 'goal',  target: 30 },
         { id: 'cigs',     name: 'сигарет скурил',       unit: 'шт',    type: 'limit', target: 0 },
-        { id: 'coffee',   name: 'кофе выпил',           unit: 'чашек', type: 'limit', target: 2 },
-        { id: 'claude',   name: 'истратил лимит Claude',unit: '',      type: 'binary' }
+        { id: 'coffee',   name: 'кофе выпил',           unit: 'чашек', type: 'limit', target: 2 }
     ];
+    const cloneMetrics = () => DEFAULT_METRICS.map(m => ({ ...m }));
     const metricTarget = m => {
         const t = dashState.metricTargets && dashState.metricTargets[m.id];
         return (t === undefined || t === null) ? m.target : t;
@@ -172,6 +169,7 @@ document.addEventListener('DOMContentLoaded', () => {
             checkinHistory: {},
             history: {},
             psychoMode: false,
+            metrics: cloneMetrics(), // живой список числовых показателей (юзер добавляет/удаляет)
             metricTargets: {},
             metricLog: {},
             onboardingDone: false, // новый пользователь — покажем тур
@@ -190,6 +188,10 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!dashState.unlockedGames) dashState.unlockedGames = [];
             if (!dashState.metricLog) dashState.metricLog = {};
             if (!dashState.metricTargets) dashState.metricTargets = {};
+            // миграция: у старых сейвов не было массива метрик → сидируем дефолтным набором
+            // (новый набор уже без «калорий» и «claude»; цели/логи по сохранившимся id остаются).
+            // Проверяем именно saved.metrics: пустой массив в сейве = юзер удалил все метрики, его не трогаем.
+            if (!Array.isArray(saved.metrics)) dashState.metrics = cloneMetrics();
             if (typeof dashState.psychoMode !== 'boolean') dashState.psychoMode = false;
             // существующих пользователей считаем уже «онбордившимися» — тур не показываем
             if (typeof dashState.onboardingDone !== 'boolean') { dashState.onboardingDone = true; dashState.seenHints = { month: true, morning: true, evening: true }; }
@@ -542,8 +544,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 const now = !isDone(uid, key);
                 setHistory(uid, key, now);
                 cell.classList.toggle('done', now);
-                // если правим сегодня — синхронизируем с дашбордом (без изменения XP)
-                if (key === tKey) { const h = habits.find(x => x.uid === uid); if (h) h.completed = now; }
+                // если правим сегодня — синхронизируем с дашбордом И начисляем XP (как toggleHabit:
+                // один раз в день, без фарма, общий habit.xpDate с «Днём»). За прошлые дни XP НЕ даём.
+                if (key === tKey) {
+                    const h = habits.find(x => x.uid === uid);
+                    if (h) {
+                        h.completed = now;
+                        if (now && h.xpDate !== todayKey()) { h.xpDate = todayKey(); awardXP(getLevelStats(dashState.level).xpPerHabit); }
+                    }
+                }
                 saveProgress();
                 // точечно обновляем мету строки и сводку месяца
                 const rowEl = cell.closest('.hm-row');
@@ -567,26 +576,21 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderPsychoMonth(y, m) {
         const root = document.getElementById('view-month');
         const days = daysInMonth(y, m);
-        const sums = {}; METRICS.forEach(mt => sums[mt.id] = 0);
+        const metrics = dashState.metrics || [];
+        const sums = {}; metrics.forEach(mt => sums[mt.id] = 0);
         for (let d = 1; d <= days; d++) {
             const rec = dashState.metricLog[fdt(y, m, d)];
             if (!rec) continue;
-            METRICS.forEach(mt => {
-                if (mt.type === 'binary') { if (rec[mt.id] === true) sums[mt.id]++; }
-                else { const v = +rec[mt.id]; if (!isNaN(v)) sums[mt.id] += v; }
-            });
+            metrics.forEach(mt => { const v = +rec[mt.id]; if (!isNaN(v)) sums[mt.id] += v; });
         }
-        const rows = METRICS.map(mt => {
-            if (mt.type === 'binary') {
-                return `<div class="pm-row"><div class="pm-top"><span class="pm-name">${mt.name}</span><span class="pm-val"><b>${sums[mt.id]}</b> из ${days} дн.</span></div></div>`;
-            }
+        const rows = metrics.map(mt => {
             const monthlyTarget = metricTarget(mt) * days;
             const isLimit = mt.type === 'limit';
             const over = isLimit && sums[mt.id] > monthlyTarget;
             const pct = monthlyTarget > 0 ? Math.min(100, Math.round(sums[mt.id] / monthlyTarget * 100)) : (sums[mt.id] > 0 ? 100 : 0);
             return `<div class="pm-row">
                 <div class="pm-top"><span class="pm-name">${mt.name}${isLimit ? '<span class="metric-tag">лимит</span>' : ''}</span>
-                <span class="pm-val ${over ? 'over' : ''}"><b>${fmtNum(sums[mt.id])}</b> / ${fmtNum(monthlyTarget)} ${mt.unit}</span></div>
+                <span class="pm-val ${over ? 'over' : ''}"><b>${fmtNum(sums[mt.id])}</b> / ${fmtNum(monthlyTarget)} ${mt.unit || ''}</span></div>
                 <div class="metric-bar ${over ? 'over' : ''}"><i style="width:${pct}%"></i></div></div>`;
         }).join('');
         root.innerHTML = `
@@ -596,15 +600,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 <button class="month-nav" id="month-next">→</button>
             </div>
             <div class="month-hint">сумма за месяц · цель = дневная × ${days} дн.</div>
-            <div class="pm-list">${rows}</div>
-            <div class="month-chart-block">
-                <div class="month-chart-title">Настроение и качество сна</div>
-                <canvas id="month-ms-chart" width="600" height="150"></canvas>
-                <div class="month-legend"><span class="lg lg-mood">● Настроение</span><span class="lg lg-sleep">● Качество сна</span></div>
-            </div>`;
+            <div class="pm-list">${rows}</div>`;
         document.getElementById('month-prev').onclick = () => { if (--monthCursor.m < 0) { monthCursor.m = 11; monthCursor.y--; } renderMonthView(); };
         document.getElementById('month-next').onclick = () => { if (++monthCursor.m > 11) { monthCursor.m = 0; monthCursor.y++; } renderMonthView(); };
-        drawMonthMoodSleep(y, m, days);
     }
 
     // Линия настроения и качества сна за месяц (данные из утренних чек-апов)
@@ -744,22 +742,37 @@ document.addEventListener('DOMContentLoaded', () => {
         else renderDashboardHabits(); // сам отрисует колесо в конце
     }
 
+    // Стилизованное подтверждение (вместо нативного confirm). Модалка #confirm-modal живёт внутри
+    // #dashboard-screen → в psycho mode инвертируется вместе с темой. Esc — отмена.
+    function confirmDialog(message, onOk) {
+        const modal = document.getElementById('confirm-modal');
+        if (!modal) { if (window.confirm(message)) onOk(); return; } // фолбэк
+        const okBtn = document.getElementById('confirm-ok');
+        const cancelBtn = document.getElementById('confirm-cancel');
+        document.getElementById('confirm-text').textContent = message;
+        function close() { modal.classList.remove('active'); okBtn.onclick = cancelBtn.onclick = modal.onclick = null; document.removeEventListener('keydown', onKey); }
+        function onKey(e) { if (e.key === 'Escape') close(); }
+        okBtn.onclick = () => { close(); onOk(); };
+        cancelBtn.onclick = close;
+        modal.onclick = (e) => { if (e.target === modal) close(); };
+        document.addEventListener('keydown', onKey);
+        modal.classList.add('active');
+    }
+
     function renderPsychoMetrics() {
         const list = document.getElementById('psycho-list');
         if (!list) return;
         list.innerHTML = '';
-        METRICS.forEach(m => {
+        const metrics = dashState.metrics || [];
+        if (!metrics.length) {
+            const empty = document.createElement('div');
+            empty.className = 'dash-habit-limit';
+            empty.textContent = 'Нет показателей — добавь первый';
+            list.appendChild(empty);
+        }
+        metrics.forEach(m => {
             const row = document.createElement('div');
             row.className = 'metric-row';
-
-            if (m.type === 'binary') {
-                const on = metricValue(m.id) === true;
-                row.classList.add('metric-binary');
-                row.innerHTML = `<span class="metric-name">${m.name}</span><span class="metric-switch ${on ? 'on' : ''}" role="button" tabindex="0" aria-label="${m.name}" aria-pressed="${on}"></span>`;
-                row.querySelector('.metric-switch').addEventListener('click', () => { setMetricValue(m.id, !on); renderPsychoMetrics(); });
-                list.appendChild(row);
-                return;
-            }
 
             const val = +metricValue(m.id) || 0;
             const target = metricTarget(m);
@@ -769,7 +782,7 @@ document.addEventListener('DOMContentLoaded', () => {
             row.innerHTML = `
                 <div class="metric-top">
                     <span class="metric-name">${m.name}${isLimit ? '<span class="metric-tag">лимит</span>' : ''}</span>
-                    <span class="metric-val ${over ? 'over' : ''}"><b>${fmtNum(val)}</b> / ${fmtNum(target)} ${m.unit}</span>
+                    <span class="metric-val ${over ? 'over' : ''}"><b>${fmtNum(val)}</b> / ${fmtNum(target)} ${m.unit || ''}</span>
                 </div>
                 <div class="metric-bar ${over ? 'over' : ''}"><i style="width:${pct}%"></i></div>
                 <div class="metric-actions">
@@ -777,6 +790,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <button class="metric-add" type="button" aria-label="Добавить">＋</button>
                     <button class="metric-goal" type="button">${isLimit ? 'лимит' : 'цель'} ${fmtNum(target)}${m.unit ? ' ' + m.unit : ''}</button>
                     ${val ? '<button class="metric-reset" type="button">сброс</button>' : ''}
+                    <button class="metric-del" type="button">удалить</button>
                 </div>`;
             const input = row.querySelector('.metric-input');
             const add = () => {
@@ -807,8 +821,66 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             const rb = row.querySelector('.metric-reset');
             if (rb) rb.addEventListener('click', () => { setMetricValue(m.id, 0); renderPsychoMetrics(); });
+            row.querySelector('.metric-del').addEventListener('click', () => {
+                confirmDialog(`Удалить показатель «${m.name}»?`, () => {
+                    dashState.metrics = dashState.metrics.filter(x => x.id !== m.id);
+                    if (dashState.metricTargets) delete dashState.metricTargets[m.id]; // снимаем переопределённую цель
+                    saveProgress();
+                    renderPsychoMetrics();
+                });
+            });
             list.appendChild(row);
         });
+        renderAddMetricControl(list);
+    }
+
+    // Контрол «+ добавить показатель»: свёрнутая кнопка → разворачивается в форму (название, ед., цель/лимит, значение)
+    function renderAddMetricControl(list) {
+        const wrap = document.createElement('div');
+        wrap.className = 'psycho-add';
+        const collapse = () => {
+            wrap.innerHTML = `<button class="psycho-add-btn" type="button">+ добавить показатель</button>`;
+            wrap.querySelector('.psycho-add-btn').addEventListener('click', expand);
+        };
+        const expand = () => {
+            wrap.innerHTML = `
+                <div class="psycho-add-form">
+                    <input type="text" class="pam-name" maxlength="32" placeholder="название, напр. отжимания">
+                    <div class="pam-row">
+                        <div class="pam-type" role="group" aria-label="Тип показателя">
+                            <button type="button" class="pam-type-btn active" data-type="goal">цель</button>
+                            <button type="button" class="pam-type-btn" data-type="limit">лимит</button>
+                        </div>
+                        <input type="number" class="pam-target" inputmode="decimal" placeholder="значение" min="0">
+                        <input type="text" class="pam-unit" maxlength="8" placeholder="ед. (необяз.)">
+                    </div>
+                    <div class="pam-actions">
+                        <button type="button" class="pam-cancel">Отмена</button>
+                        <button type="button" class="pam-save">Добавить</button>
+                    </div>
+                </div>`;
+            let type = 'goal';
+            wrap.querySelectorAll('.pam-type-btn').forEach(b => b.addEventListener('click', () => {
+                type = b.dataset.type;
+                wrap.querySelectorAll('.pam-type-btn').forEach(x => x.classList.toggle('active', x === b));
+            }));
+            const nameI = wrap.querySelector('.pam-name'); nameI.focus();
+            const save = () => {
+                const name = nameI.value.trim();
+                if (!name) { nameI.focus(); return; }
+                const unit = wrap.querySelector('.pam-unit').value.trim();
+                const t = parseFloat(String(wrap.querySelector('.pam-target').value).replace(',', '.'));
+                dashState.metrics.push({ id: newUid(), name, unit, type, target: isNaN(t) ? 0 : Math.max(0, t) });
+                saveProgress();
+                renderPsychoMetrics();
+            };
+            wrap.querySelector('.pam-save').addEventListener('click', save);
+            wrap.querySelector('.pam-cancel').addEventListener('click', collapse);
+            wrap.querySelector('.pam-target').addEventListener('keydown', e => { if (e.key === 'Enter') save(); });
+            nameI.addEventListener('keydown', e => { if (e.key === 'Enter') wrap.querySelector('.pam-target').focus(); });
+        };
+        collapse();
+        list.appendChild(wrap);
     }
 
     // =========================================
@@ -1047,18 +1119,20 @@ document.addEventListener('DOMContentLoaded', () => {
         closeBtn.addEventListener('click', close);
         delBtn.addEventListener('click', () => {
             if (currentEditIndex === null) return;
-            const h = dashState.habits[currentEditIndex];
-            if (!confirm(`Удалить привычку «${h.text}»?`)) return;
-            // подчищаем историю удаляемой привычки
-            Object.keys(dashState.history || {}).forEach(d => {
-                if (dashState.history[d][h.uid]) {
-                    delete dashState.history[d][h.uid];
-                    if (!Object.keys(dashState.history[d]).length) delete dashState.history[d];
-                }
+            const idx = currentEditIndex;          // фиксируем: confirmDialog асинхронный
+            const h = dashState.habits[idx];
+            confirmDialog(`Удалить привычку «${h.text}»?`, () => {
+                // подчищаем историю удаляемой привычки
+                Object.keys(dashState.history || {}).forEach(d => {
+                    if (dashState.history[d][h.uid]) {
+                        delete dashState.history[d][h.uid];
+                        if (!Object.keys(dashState.history[d]).length) delete dashState.history[d];
+                    }
+                });
+                dashState.habits.splice(idx, 1);
+                saveProgress(); renderDashboardHabits();
+                close(); // закрываем модалку настроек привычки
             });
-            dashState.habits.splice(currentEditIndex, 1);
-            saveProgress(); renderDashboardHabits();
-            close();
         });
         document.querySelector('#setting-reminder-toggle').addEventListener('change', (e) => { timeInput.disabled = !e.target.checked; });
     }

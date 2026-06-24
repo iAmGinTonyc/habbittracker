@@ -82,7 +82,7 @@
                             <div class="checkin-group"><label>Во сколько проснулся?</label><input type="time" class="checkin-time" data-key="wakeTime"></div>
                             <div class="checkin-group"><label>Качество сна</label><div class="scale-container" data-key="sleepQuality"></div></div>
                             <div class="checkin-group"><label>Уровень энергии утром</label><div class="scale-container" data-key="energy"></div></div>
-                            <div class="checkin-group"><label>Настрой / Мотивация</label><div class="scale-container" data-key="mood"></div></div>
+                            <div class="checkin-group"><label>Настроение</label><div class="scale-container" data-key="mood"></div></div>
                             <div class="checkin-group"><label>Главный фокус на сегодня</label><input type="text" class="checkin-text" data-key="focus" placeholder="Например, закрыть сложный проект"></div>
                             
                             <div class="checkin-save-wrapper">
@@ -155,6 +155,17 @@
                 </div>
                 <div class="progress-bar">
                     <div class="progress-fill" id="progress-fill"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- МОДАЛКА: ПОДТВЕРЖДЕНИЕ УДАЛЕНИЯ (внутри #dashboard-screen → инвертируется в psycho mode) -->
+        <div id="confirm-modal" class="habit-settings-modal">
+            <div class="habit-settings-content confirm-content">
+                <p class="confirm-text" id="confirm-text"></p>
+                <div class="confirm-actions">
+                    <button class="settings-btn cancel" id="confirm-cancel">Отмена</button>
+                    <button class="settings-btn save" id="confirm-ok">Удалить</button>
                 </div>
             </div>
         </div>
